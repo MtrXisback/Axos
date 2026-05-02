@@ -1,0 +1,159 @@
+﻿@model Proyecto_WEB.Models.OfertaTrabajo
+
+@{
+    ViewData["Title"] = "Publicar Vacante | AXON";
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 mb-5">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-decoration-none">Inicio</a></li>
+                    <li class="breadcrumb-item"><a asp-action="MisOfertas" class="text-decoration-none">Mis Nodos</a></li>
+                    <li class="breadcrumb-item active text-primary fw-bold" aria-current="page">Nueva Publicación</li>
+                </ol>
+            </nav>
+
+            <div class="axon-card border-0 shadow-lg p-5 bg-white">
+                <div class="mb-5 text-center text-lg-start">
+                    <h2 class="fw-bold text-dark mb-2">
+                        <i class="bi bi-broadcast-pin text-primary me-2"></i>
+                        Generar <span class="text-gradient">Pulso de Empleo</span>
+                    </h2>
+                    <p class="text-muted">Configura los parámetros del nodo para atraer al mejor talento Cibertec.</p>
+                </div>
+
+                <form asp-action="Publicar" method="post">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">TÍTULO DEL PUESTO</label>
+                            <div class="input-group axon-input-group">
+                                <span class="input-group-text bg-light border-0"><i class="bi bi-terminal-plus"></i></span>
+                                <input asp-for="Titulo" class="form-control bg-light border-0 py-2" placeholder="Ej: Desarrollador Backend .NET 8" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">ESPECIALIDAD ACADÉMICA</label>
+                            <select asp-for="EspecialidadID" class="form-select bg-light border-0" required>
+                                <option value="">Seleccionar área...</option>
+                                @if (ViewBag.Especialidades != null)
+                                {
+                                    @foreach (var esp in (List<Proyecto_WEB.Models.Especialidad>)ViewBag.Especialidades)
+                                    {
+                                        <option value="@esp.EspecialidadID">@esp.Nombre</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">SEDE / UBICACIÓN</label>
+                            <select asp-for="UbicacionID" class="form-select bg-light border-0" required>
+                                <option value="">Seleccionar ciudad...</option>
+                                @foreach (var loc in (List<Proyecto_WEB.Models.Ubicacion>)ViewBag.Ubicaciones)
+                                {
+                                    <option value="@loc.UbicacionID">@loc.Ciudad, @loc.Pais</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">COMPENSACIÓN MÍNIMA (S/)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light-success border-0"><i class="bi bi-cash-stack text-success"></i></span>
+                                <input asp-for="SalarioMin" type="number" class="form-control bg-light border-0" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">COMPENSACIÓN MÁXIMA (S/)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light-success border-0"><i class="bi bi-cash-coin text-success"></i></span>
+                                <input asp-for="SalarioMax" type="number" class="form-control bg-light border-0" required />
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted d-block mb-3">MODALIDAD DE TRABAJO</label>
+                            <div class="d-flex gap-4 flex-wrap">
+                                <div class="form-check axon-radio-card">
+                                    <input class="form-check-input d-none" type="radio" asp-for="Modalidad" value="Remoto" id="mod1" checked>
+                                    <label class="form-check-label px-3 py-2 rounded-pill border" for="mod1">
+                                        <i class="bi bi-house-gear me-1"></i> Remoto
+                                    </label>
+                                </div>
+                                <div class="form-check axon-radio-card">
+                                    <input class="form-check-input d-none" type="radio" asp-for="Modalidad" value="Presencial" id="mod2">
+                                    <label class="form-check-label px-3 py-2 rounded-pill border" for="mod2">
+                                        <i class="bi bi-building me-1"></i> Presencial
+                                    </label>
+                                </div>
+                                <div class="form-check axon-radio-card">
+                                    <input class="form-check-input d-none" type="radio" asp-for="Modalidad" value="Híbrido" id="mod3">
+                                    <label class="form-check-label px-3 py-2 rounded-pill border" for="mod3">
+                                        <i class="bi bi-laptop me-1"></i> Híbrido
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">REQUISITOS Y DESCRIPCIÓN DEL PUESTO</label>
+                            <textarea asp-for="Descripcion" class="form-control bg-light border-0" rows="6"
+                                      placeholder="Detalla las funciones del cargo, beneficios y cultura de la empresa..." required></textarea>
+                        </div>
+
+                        <div class="col-12 mt-5">
+                            <button type="submit" class="btn btn-axon btn-lg w-100 py-3 shadow-neon animate__animated animate__pulse animate__infinite">
+                                TRANSMITIR OFERTA <i class="bi bi-send-fill ms-2"></i>
+                            </button>
+                            <p class="text-center text-muted small mt-3 italic">
+                                Al publicar, esta oferta será visible instantáneamente en el buscador global de AXON.
+                            </p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos Específicos para Publicar AXON */
+    .bg-light-success {
+        background-color: rgba(25, 135, 84, 0.08);
+    }
+
+    /* Efecto para los Radio Buttons de Modalidad */
+    .axon-radio-card label {
+        cursor: pointer;
+        transition: all 0.3s;
+        color: #64748b;
+        background: #f8fafc;
+        border-color: #e2e8f0 !important;
+    }
+
+    .axon-radio-card input:checked + label {
+        background-color: var(--axon-primary);
+        color: white;
+        border-color: var(--axon-primary) !important;
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    }
+
+    .axon-input-group .form-control:focus {
+        background: white !important;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        border: 1px solid var(--axon-primary) !important;
+    }
+
+    textarea:focus {
+        background: white !important;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        border: 1px solid var(--axon-primary) !important;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        color: #cbd5e1;
+    }
+</style>

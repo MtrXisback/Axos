@@ -1,0 +1,240 @@
+﻿
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AXON Connecting Tech Pulse</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        :root {
+            --axon-dark: #0f172a;
+            --axon-primary: #007bff;
+            --axon-neon: #00f2ff;
+        }
+
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .navbar-axon {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+
+        .navbar-brand-axon {
+            font-weight: 800;
+            letter-spacing: -1px;
+            font-size: 1.5rem;
+        }
+
+        .nav-link-axon {
+            font-weight: 600;
+            color: #475569 !important;
+            transition: all 0.3s;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px;
+        }
+
+            .nav-link-axon:hover {
+                color: var(--axon-primary) !important;
+                background: rgba(0, 123, 255, 0.05);
+            }
+
+        .dropdown-axon {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 10px;
+        }
+
+        .footer-axon {
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 2rem 0;
+            margin-top: 5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-axon fixed-top mb-5">
+            <div class="container">
+                <a class="navbar-brand navbar-brand-axon text-dark" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-cpu-fill text-primary"></i> AXON<span class="text-primary">JOBS</span>
+                </a>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1 align-items-center">
+                        <li class="nav-item">
+                            <a class="nav-link nav-link-axon" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door-fill me-1"></i> Inicio
+                            </a>
+                        </li>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @if (User.IsInRole("Candidato"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-axon" asp-controller="Postulacion" asp-action="MisPostulaciones">
+                                        <i class="bi bi-briefcase-fill me-1"></i> Mis Postulaciones
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-axon" asp-controller="Usuario" asp-action="DirectorioEmpresas">
+                                        <i class="bi bi-building-fill me-1"></i> Directorio Empresas
+                                    </a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Empresa"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-axon" asp-controller="Oferta" asp-action="MisOfertas">
+                                        <i class="bi bi-kanban-fill me-1"></i> Panel Ofertas
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-link-axon" asp-controller="Oferta" asp-action="Publicar">
+                                        <i class="bi bi-plus-circle-fill me-1"></i> Publicar
+                                    </a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle nav-link-axon" href="#" role="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-shield-lock-fill me-1"></i> Core Admin
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-axon animate__animated animate__fadeIn">
+                                        <li><a class="dropdown-item rounded-3" asp-controller="Maestro" asp-action="Especialidades">Especialidades</a></li>
+                                        <li><a class="dropdown-item rounded-3" asp-controller="Maestro" asp-action="Ubicaciones">Ubicaciones</a></li>
+                                        <li><a class="dropdown-item rounded-3" asp-controller="Maestro" asp-action="Habilidades">Habilidades</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item rounded-3" asp-controller="Usuario" asp-action="ListadoUsuarios"><i class="bi bi-people me-2"></i> Gestión de Usuarios</a></li>
+                                        <li><a class="dropdown-item rounded-3" asp-controller="Usuario" asp-action="ListadoEmpresas"><i class="bi bi-building me-2"></i> Gestión de Empresas</a></li>
+                                    </ul>
+                                </li>
+                            }
+
+                            @* --- MENU DE USUARIO DERECHA --- *@
+                            <li class="nav-item ms-auto dropdown">
+                                <a class="nav-link dropdown-toggle text-primary fw-bold d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+                                    <span class="badge bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                                        @User.Identity.Name.Substring(0, 1).ToUpper()
+                                    </span>
+                                    @User.Identity.Name
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-axon border-0 shadow animate__animated animate__fadeIn">
+                                    @{
+                                        var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+                                    }
+                                    <li class="px-3 py-2 border-bottom mb-2">
+                                        <small class="text-muted text-uppercase fw-bold ls-1" style="font-size: 0.6rem;">Accesibilidad: @userRole</small>
+                                    </li>
+                                    <li>
+                                        @* 💡 LECTURA: Ver Perfil *@
+                                        <a class="dropdown-item" asp-controller="Usuario" asp-action="MiPerfil">
+                                            <i class="bi bi-person-circle me-2 text-primary"></i>
+                                            <span>@(userRole == "Empresa" ? "Perfil Corporativo" : "Mi Perfil")</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        @* 💡 EDICIÓN: Configurar Perfil *@
+                                        <a class="dropdown-item" asp-controller="Usuario" asp-action="ActualizarPerfil">
+                                            <i class="bi bi-gear-fill me-2 text-secondary"></i>
+                                            <span class="text-muted">Configuración</span>
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger fw-bold" asp-controller="Acceso" asp-action="Salir">
+                                            <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item ms-auto">
+                                <a class="btn btn-primary px-4 rounded-pill shadow-sm fw-bold" asp-controller="Acceso" asp-action="Index">
+                                    Acceso Core <i class="bi bi-chevron-right small"></i>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container" style="margin-top: 100px;">
+        @* MENSAJES DE SINCRONIZACIÓN *@
+        @if (TempData["Mensaje"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show animate__animated animate__fadeInDown border-0 shadow-sm mb-4" role="alert" style="border-left: 5px solid #198754; border-radius: 12px;">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill fs-4 me-3 text-success"></i>
+                    <div>
+                        <strong class="d-block">Sincronización Exitosa</strong>
+                        <span class="small">@TempData["Mensaje"]</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show animate__animated animate__shakeX border-0 shadow-sm mb-4" role="alert" style="border-left: 5px solid #dc3545; border-radius: 12px;">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill fs-4 me-3 text-danger"></i>
+                    <div>
+                        <strong class="d-block">Error de Pulso</strong>
+                        <span class="small">@TempData["Error"]</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <main role="main" class="pb-5">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer-axon">
+        <div class="container text-center text-md-start">
+            <div class="row align-items-center">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <span class="fw-bold text-dark">AXON JOBS</span> &copy; 2026 - <span class="text-muted small">Cibertec 5to Ciclo</span>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-muted small me-3">Privacidad</a>
+                    <a href="#" class="text-muted"><i class="bi bi-linkedin fs-5"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

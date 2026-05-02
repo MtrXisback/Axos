@@ -1,0 +1,170 @@
+﻿@{
+    ViewData["Title"] = "Login | AXON";
+    Layout = "_Layout";
+}
+
+<div class="login-axon-wrapper d-flex align-items-center justify-content-center">
+    <div class="axon-card-login shadow-lg overflow-hidden animate__animated animate__fadeIn">
+        <div class="row g-0">
+            <div class="col-lg-6 d-none d-lg-flex axon-bg-gradient align-items-center justify-content-center p-5 position-relative">
+                <div class="axon-grid-pattern"></div>
+                <div class="text-center position-relative z-index-10">
+                    <div class="axon-logo-container mb-4">
+                        <i class="bi bi-cpu-fill display-1 text-cyan shadow-filter"></i>
+                    </div>
+                    <h2 class="fw-bold text-white mb-2">AXON <span class="text-cyan">JOBS</span></h2>
+                    <p class="text-white-50 px-4">
+                        La sinapsis perfecta entre tu talento tecnológico y las empresas líderes del sector.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-6 bg-white p-5 d-flex flex-column justify-content-center">
+                <div class="mb-4">
+                    <h3 class="fw-bold text-dark mb-1">Acceso al <span class="text-primary">Core</span></h3>
+                    <p class="text-muted small">Inicia sesión para gestionar tu red profesional.</p>
+                </div>
+
+                @if (TempData["Mensaje"] != null)
+                {
+                    <div class="alert alert-success-axon py-2 small mb-4 animate__animated animate__fadeIn">
+                        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Mensaje"]
+                    </div>
+                }
+
+                <form asp-action="Login" method="post">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">CORREO ELECTRÓNICO</label>
+                        <div class="input-group axon-input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-envelope-at"></i></span>
+                            <input type="email" name="correo" class="form-control bg-light border-0" placeholder="usuario@axon.com" required />
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">CONTRASEÑA</label>
+                        <div class="input-group axon-input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-shield-lock"></i></span>
+                            <input type="password" name="clave" class="form-control bg-light border-0" placeholder="••••••••" required />
+                        </div>
+                    </div>
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger-axon py-2 small mb-4 animate__animated animate__shakeX">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.Error
+                        </div>
+                    }
+
+                    <button type="submit" class="btn btn-axon w-100 py-2 shadow-neon mb-4">
+                        Sincronizar <i class="bi bi-arrow-right-short ms-1"></i>
+                    </button>
+
+                    <div class="text-center mt-2">
+                        <p class="text-muted small mb-1">¿No tienes una cuenta activa?</p>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a asp-controller="Acceso" asp-action="Registrar" class="register-link">
+                                <i class="bi bi-person-plus"></i> Soy Candidato
+                            </a>
+                            <span class="text-muted">|</span>
+                            <a asp-controller="Acceso" asp-action="RegistrarEmpresa" class="register-link corporate">
+                                <i class="bi bi-building-add"></i> Soy Empresa
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos Premium para AXON Login */
+    .login-axon-wrapper {
+        min-height: 88vh;
+        background-color: #f1f5f9;
+    }
+
+    .axon-card-login {
+        width: 100%;
+        max-width: 950px;
+        background: white;
+        border-radius: 24px;
+        min-height: 550px;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .axon-bg-gradient {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .axon-grid-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(rgba(0, 242, 255, 0.1) 1px, transparent 1px);
+        background-size: 25px 25px;
+        opacity: 0.5;
+    }
+
+    .text-cyan {
+        color: #00f2ff !important;
+    }
+
+    .shadow-filter {
+        filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.4));
+    }
+
+    .btn-axon {
+        background: linear-gradient(90deg, #0d6efd, #00f2ff);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+        .btn-axon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 242, 255, 0.3);
+            color: white;
+        }
+
+    .register-link {
+        color: #0d6efd;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+        .register-link:hover {
+            color: #00f2ff;
+        }
+
+        .register-link.corporate {
+            color: #475569;
+        }
+
+            .register-link.corporate:hover {
+                color: #1e293b;
+            }
+
+    .alert-success-axon {
+        background-color: #f0fdf4;
+        color: #15803d;
+        border-left: 4px solid #22c55e;
+    }
+
+    .alert-danger-axon {
+        background-color: #fff1f2;
+        color: #be123c;
+        border-left: 4px solid #f43f5e;
+    }
+
+    .z-index-10 {
+        z-index: 10;
+    }
+</style>

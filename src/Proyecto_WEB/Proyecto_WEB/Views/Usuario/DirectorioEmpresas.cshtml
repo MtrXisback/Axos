@@ -1,0 +1,51 @@
+﻿@model List<Proyecto_WEB.Models.Empresa> 
+@{
+    ViewData["Title"] = "Directorio de Partners | AXON";
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    <div class="text-center mb-5">
+        <h6 class="text-primary fw-bold text-uppercase ls-2">Partners Tecnológicos</h6>
+        <h1 class="display-4 fw-bold text-dark">Empresas en la <span class="text-gradient">Red</span></h1>
+        <p class="text-muted mx-auto" style="max-width: 600px;">
+            Conoce a las organizaciones que confían en el talento de Cibertec para liderar sus proyectos más ambiciosos.
+        </p>
+    </div>
+
+    <div class="row g-4">
+        @if (Model != null)
+        {
+            @foreach (var empresa in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="axon-card p-4 h-100 text-center border-0 shadow-sm hover-axon-up bg-white rounded-4">
+                        <div class="axon-avatar-lg mx-auto mb-3">
+                            @* 💡 Usamos NombreEmpresa en lugar de NombreCompleto *@
+                            @(!string.IsNullOrEmpty(empresa.NombreEmpresa) ? empresa.NombreEmpresa.Substring(0, 1).ToUpper() : "E")
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">@empresa.NombreEmpresa</h5>
+                        <p class="text-muted small mb-4">
+                            <i class="bi bi-patch-check-fill text-primary me-1"></i> Partner Verificado
+                        </p>
+
+                        <div class="d-grid">
+                            @* 💡 Apuntamos al DetalleEmpresa usando el EmpresaID *@
+                            <a asp-action="DetalleEmpresa" asp-route-id="@empresa.EmpresaID" class="btn btn-outline-primary rounded-pill fw-bold">
+                                Ver Perfil y Ofertas
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<style>
+    /* ... Tus estilos se mantienen igual, están de lujo ... */
+    .text-gradient {
+        background: linear-gradient(45deg, var(--axon-primary), var(--axon-neon));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>

@@ -1,0 +1,200 @@
+﻿@model List<Proyecto_WEB.Models.Postulacion>
+
+@{
+    ViewData["Title"] = "Gestión de Talento | AXON";
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    @* --- HEADER --- *@
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-primary border-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0">
+                <i class="bi bi-people-fill text-primary me-2"></i> Candidatos Postulados
+            </h2>
+            <p class="text-muted small mb-0">
+                Analizando el flujo de talento para la Oferta <span class="badge bg-light text-primary border fw-mono">#REF-@ViewBag.OfertaID</span>
+            </p>
+        </div>
+        <a asp-controller="Oferta" asp-action="MisOfertas" class="btn btn-outline-dark rounded-pill px-4 btn-sm fw-bold">
+            <i class="bi bi-arrow-left-short"></i> Volver a mis nodos
+        </a>
+    </div>
+
+    @* 💡 Lógica Restaurada: ¿Qué mostrar si no hay nadie? *@
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="axon-card border-0 py-5 text-center bg-white shadow-sm rounded-4">
+            <div class="card-body py-5">
+                <div class="axon-icon-circle bg-light mx-auto mb-4">
+                    <i class="bi bi-person-x display-4 text-primary opacity-50"></i>
+                </div>
+                <h4 class="fw-bold text-dark">Sin sinapsis registradas</h4>
+                <p class="text-muted mx-auto" style="max-width: 450px;">
+                    Aún no hay postulantes para esta vacante. El sistema AXON sigue transmitiendo tu oferta a la red de talentos.
+                </p>
+                <div class="mt-4">
+                    <a asp-controller="Oferta" asp-action="MisOfertas" class="btn btn-primary rounded-pill px-4">
+                        Revisar otros nodos
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="axon-card border-0 overflow-hidden shadow-sm bg-white rounded-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-dark text-white">
+                        <tr>
+                            <th class="ps-4 py-3 text-uppercase fs-xs ls-1">Candidato / Perfil</th>
+                            <th class="py-3 text-uppercase fs-xs ls-1">Sincronización</th>
+                            <th class="py-3 text-uppercase fs-xs ls-1">Expediente CV</th>
+                            <th class="text-center py-3 text-uppercase fs-xs ls-1">Estado Actual</th>
+                            <th class="text-end pe-4 py-3 text-uppercase fs-xs ls-1">Acción de Cambio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="axon-avatar me-3">
+                                            @(!string.IsNullOrEmpty(item.CandidatoNombre) ? item.CandidatoNombre.Substring(0, 1).ToUpper() : "C")
+                                        </div>
+                                        <div>
+                                            <span class="fw-bold d-block text-dark">@item.CandidatoNombre</span>
+                                            <span class="text-muted fs-xs">ID de Usuario: #@item.UsuarioID</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="text-dark small fw-bold">@item.FechaPostulacion.ToString("dd/MM/yyyy")</span>
+                                        <span class="text-muted fs-xs">@item.FechaPostulacion.ToString("HH:mm") hrs</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.CV_AdjuntoURL))
+                                    {
+                                        <a href="@item.CV_AdjuntoURL" target="_blank" class="btn btn-sm btn-axon-outline-danger">
+                                            <i class="bi bi-file-earmark-pdf-fill me-1"></i> Visualizar CV
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-muted border-0 fw-normal italic">No adjuntó</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @{
+                                        var (badgeClass, icon) = item.EstadoPostulacion switch
+                                        {
+                                            "Aceptado" => ("bg-soft-success text-success", "bi-check-circle-fill"),
+                                            "Rechazado" => ("bg-soft-danger text-danger", "bi-x-circle-fill"),
+                                            "Entrevista" => ("bg-soft-info text-info", "bi-calendar-check-fill"),
+                                            _ => ("bg-soft-warning text-warning", "bi-hourglass-split")
+                                        };
+                                    }
+                                    <span class="badge @badgeClass rounded-pill px-3 py-2 border-0">
+                                        <i class="bi @icon me-1"></i> @item.EstadoPostulacion
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <form asp-action="ActualizarEstado" method="post" class="d-flex gap-2 justify-content-end align-items-center">
+                                        <input type="hidden" name="postulacionId" value="@item.PostulacionID" />
+                                        <input type="hidden" name="ofertaId" value="@item.OfertaID" />
+
+                                        <select name="nuevoEstado" class="form-select form-select-sm axon-select" style="width: 140px;">
+                                            <!option value="Pendiente" @(item.EstadoPostulacion == "Pendiente" ? "selected" : "")>Pendiente</!option>
+                                            <!option value="Entrevista" @(item.EstadoPostulacion == "Entrevista" ? "selected" : "")>Entrevista</!option>
+                                            <!option value="Aceptado" @(item.EstadoPostulacion == "Aceptado" ? "selected" : "")>Aceptado</!option>
+                                            <!option value="Rechazado" @(item.EstadoPostulacion == "Rechazado" ? "selected" : "")>Rechazado</!option>
+                                        </select>
+
+                                        <button type="submit" class="btn btn-axon btn-sm p-2 px-3" title="Confirmar cambio">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    /* Se mantienen tus estilos, están excelentes */
+    .axon-card {
+        border-radius: 20px;
+    }
+
+    .axon-avatar {
+        width: 42px;
+        height: 42px;
+        background: linear-gradient(135deg, #0d6efd, #00d4ff);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-weight: bold;
+    }
+
+    .fs-xs {
+        font-size: 0.75rem;
+    }
+
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+
+    .bg-soft-success {
+        background-color: #dcfce7 !important;
+    }
+
+    .bg-soft-danger {
+        background-color: #fee2e2 !important;
+    }
+
+    .bg-soft-info {
+        background-color: #e0f7fa !important;
+    }
+
+    .bg-soft-warning {
+        background-color: #fff7ed !important;
+    }
+
+    .axon-select {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background-color: #f8fafc;
+    }
+
+    .axon-icon-circle {
+        width: 90px;
+        height: 90px;
+        background: rgba(13, 110, 253, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .btn-axon {
+        background-color: #0d6efd;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        transition: 0.3s;
+    }
+
+        .btn-axon:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+</style>

@@ -1,0 +1,91 @@
+﻿@model Proyecto_WEB.Models.OfertaTrabajo
+
+@{
+    ViewData["Title"] = "Editar Vacante | AXON";
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 mb-5">
+            <div class="axon-card border-0 shadow-lg p-5 bg-white">
+                <div class="mb-5 text-center text-lg-start">
+                    <h2 class="fw-bold text-dark mb-2">
+                        <i class="bi bi-pencil-square text-primary me-2"></i>
+                        Reconfigurar <span class="text-gradient">Nodo</span>
+                    </h2>
+                    <p class="text-muted">Ajusta los parámetros de la vacante ID: #@Model.OfertaID</p>
+                </div>
+
+                <div asp-validation-summary="All" class="text-danger mb-4 fw-bold"></div>
+
+                <form asp-action="Actualizar" method="post">
+                    @* CAMPOS OCULTOS CRÍTICOS *@
+                    <input type="hidden" asp-for="OfertaID" />
+                    <input type="hidden" asp-for="EmpresaID" />
+                    <input type="hidden" name="FechaPublicacion" value="@Model.FechaPublicacion.ToString("yyyy-MM-ddTHH:mm:ss")" />
+                    <input type="hidden" asp-for="Modalidad" />
+                    <input type="hidden" asp-for="Estado" />
+
+                    @* CAMPOS AUXILIARES PARA QUE EL MODELSTATE NO CHILLE *@
+                    <input type="hidden" asp-for="NombreEmpresa" />
+                    <input type="hidden" asp-for="EspecialidadNombre" />
+                    <input type="hidden" asp-for="Ciudad" />
+
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">TÍTULO DEL PUESTO</label>
+                            <input asp-for="Titulo" class="form-control bg-light border-0 py-2" required />
+                            <span asp-validation-for="Titulo" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">ESPECIALIDAD</label>
+                            <select asp-for="EspecialidadID" class="form-select bg-light border-0"
+                                    asp-items="@(new SelectList(ViewBag.Especialidades, "EspecialidadID", "Nombre"))">
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">UBICACIÓN</label>
+                            <select asp-for="UbicacionID" class="form-select bg-light border-0"
+                                    asp-items="@(new SelectList(ViewBag.Ubicaciones, "UbicacionID", "Ciudad"))">
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">SALARIO MÍNIMO</label>
+                            @* Usamos type="text" con un patrón para evitar líos de puntos/comas *@
+                            <input asp-for="SalarioMin" class="form-control bg-light border-0" />
+                            <span asp-validation-for="SalarioMin" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">SALARIO MÁXIMO</label>
+                            <input asp-for="SalarioMax" class="form-control bg-light border-0" />
+                            <span asp-validation-for="SalarioMax" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">DESCRIPCIÓN</label>
+                            <textarea asp-for="Descripcion" class="form-control bg-light border-0" rows="5"></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12 mt-5">
+                            <button type="submit" class="btn btn-axon btn-lg w-100 py-3 shadow-neon">
+                                GUARDAR CAMBIOS <i class="bi bi-save ms-2"></i>
+                            </button>
+                            <a asp-action="MisOfertas" class="btn btn-link w-100 text-muted mt-2">Cancelar edición</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

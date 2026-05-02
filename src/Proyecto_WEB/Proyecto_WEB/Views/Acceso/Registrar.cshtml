@@ -1,0 +1,173 @@
+﻿@model Proyecto_WEB.Models.Usuario
+
+@{
+    ViewData["Title"] = "Registro | AXON";
+    Layout = "_Layout";
+}
+
+<div class="register-axon-wrapper d-flex align-items-center justify-content-center">
+    <div class="axon-card-register shadow-lg overflow-hidden animate__animated animate__fadeInUp">
+        <div class="row g-0 flex-row-reverse">
+            <div class="col-lg-6 d-none d-lg-flex axon-bg-gradient-alt align-items-center justify-content-center p-5 position-relative">
+                <div class="axon-circuit-pattern"></div>
+                <div class="text-center position-relative z-index-10">
+                    <div class="axon-icon-float mb-4">
+                        <i class="bi bi-person-plus-fill display-1 text-neon shadow-filter"></i>
+                    </div>
+                    <h2 class="fw-bold text-white mb-2">Únete a la <span class="text-neon">Red</span></h2>
+                    <p class="text-white-50 px-4">
+                        Crea tu nodo profesional y comienza a transmitir tu potencial a las mejores empresas IT del ecosistema.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-6 bg-white p-5">
+                <div class="mb-4">
+                    <h3 class="fw-bold text-dark mb-1">Nueva <span class="text-primary">Conexión</span></h3>
+                    <p class="text-muted small">Configura tu perfil de acceso en segundos.</p>
+                </div>
+
+                <form asp-action="Registrar" method="post">
+                    <label class="form-label small fw-bold text-muted mb-2">TIPO DE PERFIL</label>
+                    <div class="btn-group w-100 mb-4 axon-toggle-group" role="group">
+                        <input type="radio" class="btn-check" name="tipoCuenta" id="cuentaCandidato" value="Candidato" checked autocomplete="off">
+                        <label class="btn btn-outline-axon py-2" for="cuentaCandidato">
+                            <i class="bi bi-person-badge me-2"></i> Candidato
+                        </label>
+
+                        <input type="radio" class="btn-check" name="tipoCuenta" id="cuentaEmpresa" value="Empresa" autocomplete="off">
+                        <label class="btn btn-outline-axon py-2" for="cuentaEmpresa" onclick="window.location.href='@Url.Action("RegistrarEmpresa", "Acceso")'">
+                            <i class="bi bi-building me-2"></i> Empresa
+                        </label>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">NOMBRE O RAZÓN SOCIAL</label>
+                        <div class="input-group axon-input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-person-vcard"></i></span>
+                            <input asp-for="NombreCompleto" class="form-control bg-light border-0" placeholder="Ej: Miguel Alonso" required />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">EMAIL INSTITUCIONAL</label>
+                        <div class="input-group axon-input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-envelope-check"></i></span>
+                            <input asp-for="Email" type="email" class="form-control bg-light border-0" placeholder="usuario@axon.com" required />
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">PASSWORD DE ACCESO</label>
+                        <div class="input-group axon-input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-key"></i></span>
+                            <input asp-for="PasswordHash" type="password" class="form-control bg-light border-0" placeholder="••••••••" required />
+                        </div>
+                    </div>
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger-axon py-2 small mb-3 animate__animated animate__shakeX">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.Error
+                        </div>
+                    }
+
+                    <button type="submit" class="btn btn-axon-success w-100 py-2 shadow-neon-success mb-3 text-uppercase fw-bold">
+                        Inicializar Registro <i class="bi bi-stars ms-1"></i>
+                    </button>
+
+                    <div class="text-center mt-3">
+                        <p class="text-muted small">
+                            ¿Ya tienes una conexión activa?
+                            <a asp-controller="Acceso" asp-action="Index" class="text-primary fw-bold text-decoration-none border-bottom border-primary border-2 pb-1">
+                                Iniciar Sesión
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .register-axon-wrapper {
+        min-height: 92vh;
+        background-color: #f1f5f9;
+        padding: 40px 20px;
+    }
+
+    .axon-card-register {
+        width: 100%;
+        max-width: 1000px;
+        background: white;
+        border-radius: 28px;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .axon-bg-gradient-alt {
+        background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%);
+    }
+
+    .axon-circuit-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url('https://www.transparenttextures.com/patterns/circuit-board.png');
+        opacity: 0.07;
+    }
+
+    .text-neon {
+        color: #00f2ff !important;
+    }
+
+    .axon-icon-float {
+        animation: axonFloat 4s ease-in-out infinite;
+    }
+
+    @@keyframes axonFloat {
+        0%, 100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-15px);
+        }
+    }
+
+    .axon-toggle-group .btn-outline-axon {
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+    }
+
+    .axon-toggle-group .btn-check:checked + .btn-outline-axon {
+        background-color: var(--axon-primary);
+        border-color: var(--axon-primary);
+        color: white;
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    }
+
+    .btn-axon-success {
+        background: linear-gradient(90deg, #10b981, #059669);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-axon-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+            color: white;
+        }
+
+    .shadow-neon-success {
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    }
+
+    .z-index-10 {
+        z-index: 10;
+    }
+</style>

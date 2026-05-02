@@ -1,0 +1,15 @@
+# Archivos de compilación (esto es lo que más pesa y no debe subirse)
+[Bb]in/
+[Oo]bj/
+*.csproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+
+# Logs y archivos temporales
+*.log
+*.tmp
+*.bak

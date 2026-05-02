@@ -1,0 +1,134 @@
+﻿@model Proyecto_WEB.Models.Usuario
+@{
+    ViewData["Title"] = "Mi Perfil | AXON";
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="axon-card border-0 shadow-lg p-5 text-center position-relative overflow-hidden rounded-4 bg-white">
+                @* Fondo decorativo de red *@
+                <div class="axon-bg-gradient position-absolute top-0 start-0 w-100" style="height: 120px; z-index: 1; opacity: 0.9;"></div>
+
+                <div class="position-relative z-index-10 mt-4">
+                    @* Avatar con inicial dinámico *@
+                    <div class="axon-avatar-lg mx-auto mb-4 border border-4 border-white shadow-sm">
+                        @(!string.IsNullOrEmpty(Model.NombreCompleto) ? Model.NombreCompleto.Substring(0, 1).ToUpper() : "?")
+                    </div>
+
+                    <h2 class="fw-bold text-dark mb-1">@Model.NombreCompleto</h2>
+
+                    @* Badge de Rol dinámico *@
+                    <span class="badge @(Model.Rol == "Admin" ? "bg-soft-danger text-danger" : "bg-soft-primary text-primary") px-4 py-2 rounded-pill mb-4">
+                        <i class="bi @(Model.Rol == "Admin" ? "bi-shield-lock" : "bi-person-badge") me-1"></i> ROL: @Model.Rol.ToUpper()
+                    </span>
+
+                    @* Nodos de Información *@
+                    <div class="row text-start mt-4 g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-3 border-start border-primary border-3 h-100">
+                                <label class="small text-muted d-block fw-bold text-uppercase ls-1">Correo Electrónico</label>
+                                <span class="text-dark fw-semibold">@Model.Email</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-3 border-start border-cyan border-3 h-100">
+                                <label class="small text-muted d-block fw-bold text-uppercase ls-1">ID de Conexión</label>
+                                <span class="text-dark fw-mono">#AXON-@Model.UsuarioID.ToString("D5")</span>
+                            </div>
+                        </div>
+
+                        @* Estado del nodo dinámico *@
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-3 border-start @(Model.Activo ? "border-success" : "border-danger") border-3 h-100">
+                                <label class="small text-muted d-block fw-bold text-uppercase ls-1">Estado del Nodo</label>
+                                @if (Model.Activo)
+                                {
+                                    <span class="text-success fw-bold"><i class="bi bi-broadcast me-1"></i> Sincronizado / Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger fw-bold"><i class="bi bi-exclamation-triangle me-1"></i> Nodo Suspendido</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-3 border-start border-warning border-3 h-100">
+                                <label class="small text-muted d-block fw-bold text-uppercase ls-1">Nivel de Acceso</label>
+                                <span class="text-dark">Seguridad Nivel @(Model.Rol == "Admin" ? "01 (Root)" : "02 (User)")</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5">
+                        <div class="d-flex justify-content-center gap-3">
+                            @* 💡 Link sincronizado con el Controller *@
+                            <a asp-controller="Usuario" asp-action="ActualizarPerfil" class="btn btn-axon px-5 shadow-neon-sm">
+                                <i class="bi bi-pencil-square me-2"></i>Editar Datos
+                            </a>
+                        </div>
+                        <p class="mt-4 text-muted small">
+                            <i class="bi bi-shield-shaded me-1"></i> Tu identidad digital está cifrada y vinculada al núcleo de datos AXON.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+
+    .axon-avatar-lg {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #0d6efd, #00f2ff);
+        color: white;
+        border-radius: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        font-weight: 800;
+        z-index: 5;
+    }
+
+    .axon-bg-gradient {
+        background: linear-gradient(90deg, #0d6efd 0%, #00d4ff 100%);
+    }
+
+    /* Colores Soft para Roles */
+    .bg-soft-primary {
+        background: rgba(13, 110, 253, 0.1);
+    }
+
+    .bg-soft-danger {
+        background: rgba(220, 53, 69, 0.1);
+    }
+
+    .border-cyan {
+        border-color: #00d4ff !important;
+    }
+
+    .z-index-10 {
+        z-index: 10;
+    }
+
+    .fw-mono {
+        font-family: 'SFMono-Regular', Consolas, monospace;
+    }
+
+    .shadow-neon-sm {
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        transition: 0.3s;
+    }
+
+        .shadow-neon-sm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
+        }
+</style>

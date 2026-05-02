@@ -1,0 +1,150 @@
+﻿@model List<Proyecto_WEB.Models.OfertaTrabajo>
+@{
+    ViewData["Title"] = "Mis Nodos de Empleo | AXON";
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+
+    @* --- HEADER DE GESTIÓN --- *@
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-primary border-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0"><i class="bi bi-layers-half text-primary me-2"></i> Mis Publicaciones</h2>
+            <p class="text-muted small mb-0">Gestión de vacantes activas en la red AXON</p>
+        </div>
+        <a asp-action="Publicar" class="btn btn-axon shadow-neon-sm px-4 py-2">
+            <i class="bi bi-plus-circle me-2"></i>Publicar Nueva
+        </a>
+    </div>
+
+    @* --- VALIDACIÓN DE LISTA VACÍA --- *@
+    @if (Model == null || !Model.Any())
+    {
+        <div class="text-center py-5 bg-white rounded-4 shadow-sm border">
+            <div class="py-4">
+                <i class="bi bi-search text-muted display-1"></i>
+                <h4 class="mt-3 text-dark fw-bold">No hay vacantes registradas</h4>
+                <p class="text-muted">Aún no has emitido señales de empleo en este nodo corporativo.</p>
+                <a asp-action="Publicar" class="btn btn-outline-primary rounded-pill mt-2">Emitir Primera Vacante</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6">
+                    <div class="axon-card p-4 border-0 shadow-sm bg-white position-relative overflow-hidden h-100 d-flex flex-column">
+
+                        @* --- HEADER DE LA CARD (SOLUCIÓN AL SOLAPAMIENTO) --- *@
+                        <div class="mb-3">
+                            @* Fila de Badges: Modalidad y Estado *@
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-soft-primary text-primary border border-primary border-opacity-10 px-3">
+                                    <i class="bi bi-laptop me-1"></i> @item.Modalidad
+                                </span>
+
+                                @{
+                                    var badgeClass = item.Estado == "Activa" ? "bg-success" : "bg-danger";
+                                    var label = item.Estado == "Activa" ? "TRANSMITIENDO" : "PAUSADA";
+                                }
+                                <span class="badge @badgeClass rounded-pill fw-bold" style="font-size: 0.65rem; letter-spacing: 0.5px;">
+                                    <i class="bi bi-broadcast me-1"></i> @label
+                                </span>
+                            </div>
+
+                            @* Título: Ahora tiene el 100% del ancho libre *@
+                            <h5 class="fw-bold text-dark mb-0 text-uppercase ls-1">@item.Titulo</h5>
+                        </div>
+
+                        @* --- CUERPO Y ACCIONES --- *@
+                        <div class="d-flex justify-content-between align-items-end mt-auto pt-3 border-top">
+                            <div class="d-flex flex-column">
+                                <span class="text-dark fw-bold small">
+                                    <i class="bi bi-cash-stack text-success me-1"></i> S/ @item.SalarioMin.ToString("N0") - @item.SalarioMax.ToString("N0")
+                                </span>
+                                <span class="text-muted mt-1" style="font-size: 0.75rem;">
+                                    <i class="bi bi-calendar3 me-1"></i> Nodo creado: @item.FechaPublicacion.ToString("dd/MM/yyyy")
+                                </span>
+                            </div>
+
+                            @* --- GRUPO DE OPERACIONES --- *@
+                            <div class="btn-group rounded-pill overflow-hidden shadow-sm border bg-light">
+                                <a asp-action="VerPostulantes" asp-route-id="@item.OfertaID" class="btn btn-white btn-sm px-3" title="Ver Candidatos">
+                                    <i class="bi bi-people-fill text-dark"></i>
+                                </a>
+
+                                <a asp-action="Actualizar" asp-route-id="@item.OfertaID" class="btn btn-white btn-sm px-3 border-start" title="Editar Nodo">
+                                    <i class="bi bi-pencil-square text-primary"></i>
+                                </a>
+
+                                <form asp-action="Eliminar" method="post" style="display: contents;">
+                                    <input type="hidden" name="id" value="@item.OfertaID" />
+                                    <input type="hidden" name="estadoActual" value="@item.Estado" />
+
+                                    @if (item.Estado == "Activa")
+                                    {
+                                        <button type="submit" class="btn btn-white btn-sm px-3 border-start"
+                                                onclick="return confirm('¿Confirmas pausar la transmisión de esta vacante?');">
+                                            <i class="bi bi-pause-circle-fill text-danger"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn btn-white btn-sm px-3 border-start"
+                                                onclick="return confirm('¿Deseas reactivar la vacante en la red?');">
+                                            <i class="bi bi-play-circle-fill text-success"></i>
+                                        </button>
+                                    }
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .ls-1 {
+        letter-spacing: 0.5px;
+    }
+
+    .bg-soft-primary {
+        background-color: rgba(13, 110, 253, 0.08) !important;
+    }
+
+    .axon-card {
+        border-radius: 18px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(0,0,0,0.05) !important;
+    }
+
+        .axon-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08) !important;
+            border-color: rgba(13, 110, 253, 0.2) !important;
+        }
+
+    .btn-axon {
+        background: linear-gradient(45deg, #0d6efd, #00d4ff);
+        border: none;
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn-white {
+        background: white;
+        border: none;
+        transition: 0.2s;
+    }
+
+        .btn-white:hover {
+            background: #f1f5f9;
+        }
+
+    .shadow-neon-sm {
+        box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+    }
+</style>

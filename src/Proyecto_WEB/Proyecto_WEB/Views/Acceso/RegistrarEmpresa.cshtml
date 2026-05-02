@@ -1,0 +1,160 @@
+﻿@model Proyecto_WEB.Models.RegistroEmpresaVM
+
+@{
+    ViewData["Title"] = "Registro Corporativo | AXON";
+    Layout = "_Layout";
+}
+
+<div class="register-axon-wrapper d-flex align-items-center justify-content-center">
+    <div class="axon-card-register shadow-lg overflow-hidden animate__animated animate__fadeInUp">
+        <div class="row g-0 flex-row-reverse">
+            <div class="col-lg-5 d-none d-lg-flex axon-bg-gradient-corporate align-items-center justify-content-center p-5 position-relative">
+                <div class="axon-circuit-pattern"></div>
+                <div class="text-center position-relative z-index-10">
+                    <div class="axon-icon-float mb-4">
+                        <i class="bi bi-building-fill-add display-1 text-neon shadow-filter"></i>
+                    </div>
+                    <h2 class="fw-bold text-white mb-2">Nodo <span class="text-neon">Partner</span></h2>
+                    <p class="text-white-50 px-4">
+                        Conecta tu empresa con el núcleo de talento de Cibertec. Accede a perfiles validados y potencia tu stack tecnológico.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-lg-7 bg-white p-5">
+                <div class="mb-4">
+                    <h3 class="fw-bold text-dark mb-1">Registro <span class="text-primary">Corporativo</span></h3>
+                    <p class="text-muted small">Sincroniza tu empresa con la red AXON.</p>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-muted mb-2 text-uppercase ls-1">Tipo de Perfil</label>
+                    <div class="btn-group w-100 axon-toggle-group" role="group">
+                        <input type="radio" class="btn-check" name="tipoCuenta" id="cuentaCandidato" autocomplete="off">
+                        <label class="btn btn-outline-axon py-2" for="cuentaCandidato" onclick="window.location.href='@Url.Action("Registrar", "Acceso")'">
+                            <i class="bi bi-person-badge me-2"></i> Candidato
+                        </label>
+
+                        <input type="radio" class="btn-check" name="tipoCuenta" id="cuentaEmpresa" checked autocomplete="off">
+                        <label class="btn btn-outline-axon py-2" for="cuentaEmpresa">
+                            <i class="bi bi-building me-2"></i> Empresa
+                        </label>
+                    </div>
+                </div>
+
+                <form asp-action="RegistrarEmpresa" method="post">
+
+                    <h6 class="text-primary fw-bold small text-uppercase ls-1 mb-3 border-bottom pb-2">Datos del Representante</h6>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold text-muted">NOMBRE COMPLETO</label>
+                            <div class="input-group axon-input-group">
+                                <span class="input-group-text bg-light border-0"><i class="bi bi-person-circle"></i></span>
+                                <input asp-for="NombreCompleto" class="form-control bg-light border-0" placeholder="Ej: Juan Pérez" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label small fw-bold text-muted">EMAIL CORPORATIVO</label>
+                            <div class="input-group axon-input-group">
+                                <span class="input-group-text bg-light border-0"><i class="bi bi-envelope-at"></i></span>
+                                <input asp-for="Email" type="email" class="form-control bg-light border-0" placeholder="rrhh@empresa.com" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">PASSWORD DE ACCESO</label>
+                        <div class="input-group axon-input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-shield-lock"></i></span>
+                            <input asp-for="Password" type="password" class="form-control bg-light border-0" placeholder="••••••••" required />
+                        </div>
+                    </div>
+
+                    <h6 class="text-primary fw-bold small text-uppercase ls-1 mb-3 border-bottom pb-2">Información de la Empresa</h6>
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label small fw-bold text-muted">RAZÓN SOCIAL</label>
+                            <div class="input-group axon-input-group">
+                                <span class="input-group-text bg-light border-0"><i class="bi bi-building"></i></span>
+                                <input asp-for="NombreEmpresa" class="form-control bg-light border-0" placeholder="Empresa S.A.C." required />
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label small fw-bold text-muted">RUC</label>
+                            <div class="input-group axon-input-group">
+                                <input asp-for="RUC" class="form-control bg-light border-0" placeholder="11 dígitos" required maxlength="11" minlength="11" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">SITIO WEB (OPCIONAL)</label>
+                        <div class="input-group axon-input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-globe"></i></span>
+                            <input asp-for="SitioWeb" class="form-control bg-light border-0" placeholder="https://www.empresa.com" />
+                        </div>
+                    </div>
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger-axon py-2 small mb-3 animate__animated animate__shakeX">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.Error
+                        </div>
+                    }
+
+                    <button type="submit" class="btn btn-axon-primary w-100 py-3 shadow-neon mb-3 text-uppercase fw-bold">
+                        Vincular Empresa <i class="bi bi-node-plus ms-1"></i>
+                    </button>
+
+                    <div class="text-center mt-2">
+                        <a asp-controller="Acceso" asp-action="Index" class="text-muted small text-decoration-none">
+                            <i class="bi bi-arrow-left me-1"></i> Volver al login
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Extendemos tus estilos */
+    .axon-bg-gradient-corporate {
+        background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+    }
+
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+
+    .btn-axon-primary {
+        background: linear-gradient(90deg, #007bff, #00f2ff);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-axon-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 242, 255, 0.4);
+            color: white;
+        }
+
+    .axon-toggle-group .btn-outline-axon {
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .axon-toggle-group .btn-check:checked + .btn-outline-axon {
+        background-color: #0d6efd; /* El azul de tu botón Vincular */
+        border-color: #0d6efd;
+        color: white;
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+    }
+
+    /* Reutilizamos tus otros estilos de .register-axon-wrapper, etc. */
+</style>

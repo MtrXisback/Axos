@@ -1,0 +1,217 @@
+﻿@model List<Proyecto_WEB.Models.Habilidad>
+
+@{
+    ViewData["Title"] = "Gestión de Habilidades | AXON Admin";
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    @* --- HEADER --- *@
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-success border-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0"><i class="bi bi-lightning-charge-fill text-success me-2"></i> Matriz de Habilidades</h2>
+            <p class="text-muted small mb-0">Configuración de competencias técnicas y soft skills del ecosistema</p>
+        </div>
+        <button class="btn btn-axon-success shadow-neon-success-sm" data-bs-toggle="modal" data-bs-target="#modalNueva">
+            <i class="bi bi-plus-lg me-1"></i> Nueva Habilidad
+        </button>
+    </div>
+
+    @* --- TABLA DE SKILLS --- *@
+    <div class="axon-card border-0 overflow-hidden shadow-sm rounded-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th class="ps-4 py-3 text-uppercase fs-xs ls-1">Skill ID</th>
+                        <th class="py-3 text-uppercase fs-xs ls-1">Competencia Técnica</th>
+                        <th class="text-end pe-4 py-3 text-uppercase fs-xs ls-1">Operaciones de Base</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    @foreach (var item in Model)
+                    {
+                        string rowClass = item.Estado == "Inactivo" ? "opacity-50 grayscale-filter" : "";
+
+                        <tr class="@rowClass">
+                            <td class="ps-4">
+                                <span class="badge bg-light text-success border fw-mono">#SKL-@item.HabilidadID.ToString("D3")</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="axon-badge-skill @(item.Estado == "Inactivo" ? "bg-secondary text-white border-0" : "")">
+                                        @item.Nombre
+                                    </span>
+                                    @if (item.Estado == "Inactivo")
+                                    {
+                                        <span class="badge bg-danger ms-2" style="font-size: 0.6rem;">INACTIVO</span>
+                                    }
+                                </div>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group shadow-sm rounded-pill overflow-hidden border">
+                                    <button class="btn btn-white btn-sm border-end px-3" onclick="abrirEditar(@item.HabilidadID)" title="Editar Skill">
+                                        <i class="bi bi-pencil-fill text-primary"></i>
+                                    </button>
+                                    <a href="/Maestro/EliminarHabilidad/@item.HabilidadID"
+                                       class="btn btn-white btn-sm px-3"
+                                       onclick="return confirm('¿Cambiar disponibilidad de este skill, mi rey?')"
+                                       title="@(item.Estado == "Inactivo" ? "Reactivar" : "Desactivar")">
+                                        <i class="bi @(item.Estado == "Inactivo" ? "bi-check-circle-fill text-success" : "bi-power text-danger")"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@* --- MODAL NUEVA --- *@
+<div class="modal fade" id="modalNueva" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-dark text-white border-0 py-3">
+                <h5 class="modal-title fw-bold"><i class="bi bi-cpu me-2"></i> Registrar Nueva Habilidad</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="GuardarHabilidad"  asp-controller="Maestro"  method="post">
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted text-uppercase">Nombre del Skill</label>
+                        <div class="input-group axon-input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-terminal"></i></span>
+                            <input type="text" name="nombre" class="form-control bg-light border-0" placeholder="Ej: React Native" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-axon-success px-4">Añadir al Stack</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* --- MODAL EDITAR --- *@
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-success text-white border-0 py-3">
+                <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i> Modificar Habilidad</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="ActualizarHabilidad" method="post">
+                <div class="modal-body p-4">
+                    <input type="hidden" id="editID" name="HabilidadID" />
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted text-uppercase">Nombre del Skill</label>
+                        <div class="input-group axon-input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-code-slash"></i></span>
+                            <input type="text" id="editNombre" name="Nombre" class="form-control bg-light border-0" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Descartar</button>
+                    <button type="submit" class="btn btn-success rounded-pill px-4 shadow-sm text-white">Sincronizar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .grayscale-filter {
+        filter: grayscale(100%);
+        transition: 0.4s;
+    }
+
+    .axon-badge-skill {
+        background: linear-gradient(90deg, #f0fdf4, #dcfce7);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        padding: 5px 15px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-block;
+    }
+
+    .btn-axon-success {
+        background: linear-gradient(90deg, #10b981, #059669);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 10px 25px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .btn-axon-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+            color: white;
+        }
+
+    .btn-white {
+        background: white;
+        border: none;
+        transition: 0.2s;
+    }
+
+        .btn-white:hover {
+            background: #f8f9fa;
+            transform: scale(1.05);
+        }
+
+    .fw-mono {
+        font-family: 'SFMono-Regular', Consolas, monospace;
+    }
+
+    .fs-xs {
+        font-size: 0.75rem;
+    }
+
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function abrirEditar(id) {
+            // 💡 Usamos Url.Content para asegurar que la ruta sea absoluta desde la raíz
+            const url = '@Url.Content("~/Maestro/ObtenerHabilidad/")' + id;
+
+            fetch(url)
+                .then(r => {
+                    if (!r.ok) throw new Error("Error en el servidor WEB");
+                    return r.json();
+                })
+                .then(obj => {
+                    // La API devuelve { success, data }, el service lo mapea
+                    const skill = obj.data || obj;
+
+                    const txtID = document.getElementById('editID');
+                    const txtNombre = document.getElementById('editNombre');
+
+                    if (txtID && txtNombre) {
+                        txtID.value = skill.habilidadID || skill.HabilidadID;
+                        txtNombre.value = skill.nombre || skill.Nombre;
+
+                        // Inicializar y mostrar el modal
+                        var modalEl = document.getElementById('modalEditar');
+                        var modalEditar = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                        modalEditar.show();
+                    }
+                })
+                .catch(err => {
+                    console.error("Error cargando habilidad:", err);
+                    alert("No se pudo cargar la habilidad, mi rey.");
+                });
+        }
+    </script>
+}

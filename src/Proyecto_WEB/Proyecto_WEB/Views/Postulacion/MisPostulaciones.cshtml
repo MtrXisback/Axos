@@ -1,0 +1,230 @@
+﻿@model List<Proyecto_WEB.Models.Postulacion>
+
+@{
+    ViewData["Title"] = "Mi Actividad | AXON";
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-primary border-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0"><i class="bi bi-activity text-primary me-2"></i> Mi Pulso Profesional</h2>
+            <p class="text-muted small mb-0">Seguimiento en tiempo real de tus sinapsis con empresas</p>
+        </div>
+        <a asp-controller="Home" asp-action="Buscador" class="btn btn-axon shadow-neon-sm">
+            <i class="bi bi-search me-1"></i> Explorar nuevas ofertas
+        </a>
+    </div>
+
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="axon-card border-0 py-5 text-center bg-white">
+            <div class="card-body py-5">
+                <div class="axon-icon-circle bg-light-primary mx-auto mb-4">
+                    <i class="bi bi-send-x display-4 text-primary"></i>
+                </div>
+                <h4 class="fw-bold text-dark">Tu red está en reposo</h4>
+                <p class="text-muted mx-auto" style="max-width: 400px;">
+                    Aún no has iniciado ninguna postulación. El ecosistema AXON tiene cientos de oportunidades esperando tu talento.
+                </p>
+                <a asp-controller="Home" asp-action="Buscador" class="btn btn-outline-primary rounded-pill px-4 mt-3">
+                    Iniciar mi primera conexión
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="axon-card border-0 overflow-hidden shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-dark text-white">
+                        <tr>
+                            <th class="ps-4 py-3 text-uppercase fs-xs ls-1">Nodo / Puesto</th>
+                            <th class="py-3 text-uppercase fs-xs ls-1">Sincronización</th>
+                            <th class="text-center py-3 text-uppercase fs-xs ls-1">Estado de Sinapsis</th>
+                            <th class="text-center py-3 text-uppercase fs-xs ls-1">Expediente</th>
+                            <th class="text-end pe-4 py-3 text-uppercase fs-xs ls-1">Gestión</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-company me-3">
+                                            <i class="bi bi-building text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <span class="fw-bold d-block text-dark">@item.OfertaTitulo</span>
+                                            <span class="text-muted fs-xs fw-mono">ID-REF: #@item.PostulacionID.ToString("D4")</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="text-dark small fw-bold">@item.FechaPostulacion.ToString("dd MMM, yyyy")</span>
+                                        <span class="text-muted fs-xs">@item.FechaPostulacion.ToString("HH:mm") hrs</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    @{
+                                        var (badgeClass, icon) = item.EstadoPostulacion switch
+                                        {
+                                            "Aceptado" => ("bg-soft-success text-success", "bi-check-circle-fill"),
+                                            "Rechazado" => ("bg-soft-danger text-danger", "bi-x-circle-fill"),
+                                            "Entrevista" => ("bg-soft-info text-info", "bi-calendar-event-fill"),
+                                            _ => ("bg-soft-warning text-warning", "bi-hourglass-split")
+                                        };
+                                    }
+                                    <span class="badge @badgeClass rounded-pill px-3 py-2 border-0">
+                                        <i class="bi @icon me-1"></i> @item.EstadoPostulacion
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    @if (!string.IsNullOrEmpty(item.CV_AdjuntoURL))
+                                    {
+                                        <a href="@item.CV_AdjuntoURL" target="_blank" class="axon-pdf-link" title="Ver CV enviado">
+                                            <i class="bi bi-file-earmark-pdf-fill fs-4"></i>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted fs-xs italic">No adjunto</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group rounded-pill overflow-hidden shadow-sm">
+                                        <a asp-controller="Oferta" asp-action="Detalle" asp-route-id="@item.OfertaID"
+                                           class="btn btn-white btn-sm px-3" title="Revisar oferta">
+                                            <i class="bi bi-eye-fill text-primary"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-white btn-sm px-3"
+                                                onclick="confirmarCancelacion(@item.PostulacionID)" title="Retirar postulación">
+                                            <i class="bi bi-trash3-fill text-danger"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="modalConfirmar" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-body text-center p-4">
+                <div class="icon-box-danger mb-3">
+                    <i class="bi bi-exclamation-octagon text-danger display-5"></i>
+                </div>
+                <h5 class="fw-bold text-dark">¿Interrumpir conexión?</h5>
+                <p class="text-muted small">Tu postulación será eliminada permanentemente del nodo de la empresa.</p>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-light rounded-pill w-100 fw-bold" data-bs-dismiss="modal">Cerrar</button>
+                    <a id="btnConfirmarEliminar" href="#" class="btn btn-danger rounded-pill w-100 fw-bold shadow-sm">Confirmar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos Actividad Laboral AXON */
+    .axon-card {
+        border-radius: 20px;
+        background: white;
+    }
+
+    .axon-icon-circle {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .avatar-company {
+        width: 40px;
+        height: 40px;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+    }
+
+    .fs-xs {
+        font-size: 0.75rem;
+    }
+
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+
+    .fw-mono {
+        font-family: 'SFMono-Regular', Consolas, monospace;
+    }
+
+    /* Badges de Estado AXON */
+    .bg-soft-success {
+        background-color: #dcfce7 !important;
+    }
+
+    .bg-soft-danger {
+        background-color: #fee2e2 !important;
+    }
+
+    .bg-soft-info {
+        background-color: #e0f7fa !important;
+    }
+
+    .bg-soft-warning {
+        background-color: #fff7ed !important;
+    }
+
+    .axon-pdf-link {
+        color: #ef4444;
+        transition: all 0.3s;
+    }
+
+        .axon-pdf-link:hover {
+            color: #b91c1c;
+            transform: scale(1.2);
+            display: inline-block;
+        }
+
+    .btn-white {
+        background: white;
+        border: none;
+    }
+
+        .btn-white:hover {
+            background: #f8fafc;
+        }
+
+    .icon-box-danger {
+        width: 70px;
+        height: 70px;
+        background: #fff1f2;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function confirmarCancelacion(id) {
+            const url = '@Url.Action("Cancelar", "Postulacion")/' + id;
+            document.getElementById('btnConfirmarEliminar').setAttribute('href', url);
+            new bootstrap.Modal(document.getElementById('modalConfirmar')).show();
+        }
+    </script>
+}

@@ -1,0 +1,145 @@
+﻿@model Proyecto_WEB.Models.Empresa
+
+@{
+    ViewData["Title"] = "Perfil Corporativo | AXON";
+    // 💡 Seguridad: Si por alguna razón el modelo llega nulo, evitamos el crash
+    if (Model == null)
+    {
+        <div class="container mt-5 text-center">
+            <div class="alert alert-warning rounded-4 shadow-sm">
+                <i class="bi bi-exclamation-triangle fs-1 d-block mb-3"></i>
+                <h4>Nodo no sincronizado</h4>
+                <p>No pudimos recuperar los datos de la empresa. Por favor, intenta reingresar al sistema.</p>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary rounded-pill">Volver al Inicio</a>
+            </div>
+        </div>
+        return;
+    }
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            @* --- ENCABEZADO CORPORATIVO --- *@
+            <div class="axon-card border-0 shadow-lg p-0 bg-white overflow-hidden rounded-4 mb-4">
+                <div class="bg-primary p-4 text-white d-flex align-items-center justify-content-between"
+                     style="background: linear-gradient(45deg, #0d6efd, #002d72) !important;">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-white text-primary rounded-3 p-3 me-3 shadow-sm">
+                            <i class="bi bi-building-check fs-1"></i>
+                        </div>
+                        <div>
+                            <h2 class="fw-bold mb-0">@Model.NombreEmpresa</h2>
+                            <p class="mb-0 opacity-75 fw-mono">ID-TOKEN: #EMP-@Model.EmpresaID.ToString("D4")</p>
+                        </div>
+                    </div>
+                    <span class="badge bg-white text-primary rounded-pill px-3 py-2 fw-bold shadow-sm">
+                        <i class="bi bi-cpu me-1"></i> @(Model.Activo ? "NODO ACTIVO" : "SISTEMA OFFLINE")
+                    </span>
+                </div>
+
+                <div class="p-5">
+                    <div class="row g-5">
+                        @* --- COLUMNA IZQUIERDA: DATOS MAESTROS --- *@
+                        <div class="col-md-7">
+                            <h4 class="fw-bold text-dark mb-4 border-bottom pb-2">
+                                <i class="bi bi-info-square me-2 text-primary"></i>Información de la Entidad
+                            </h4>
+
+                            <div class="row g-4">
+                                <div class="col-sm-6">
+                                    <label class="small fw-bold text-muted d-block text-uppercase">Razón Social</label>
+                                    <p class="fs-5 text-dark fw-semibold">@Model.NombreEmpresa</p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label class="small fw-bold text-muted d-block text-uppercase">Registro Único (RUC)</label>
+                                    <p class="fs-5 text-primary fw-bold fw-mono">@Model.RUC</p>
+                                </div>
+                                <div class="col-12">
+                                    <label class="small fw-bold text-muted d-block text-uppercase">Descripción Corporativa</label>
+                                    <div class="p-3 bg-light rounded-3 border-start border-primary border-3">
+                                        <p class="text-secondary mb-0 text-justify italic">
+                                            "@(string.IsNullOrEmpty(Model.Descripcion) ? "Esta empresa aún no ha definido su visión en la red AXON." : Model.Descripcion)"
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @* --- COLUMNA DERECHA: CONECTIVIDAD Y ACCIONES --- *@
+                        <div class="col-md-5">
+                            <h4 class="fw-bold text-dark mb-4 border-bottom pb-2">
+                                <i class="bi bi-link-45deg me-2 text-primary"></i>Conectividad
+                            </h4>
+
+                            <div class="axon-status-box p-4 rounded-4 mb-4">
+                                <div class="mb-3">
+                                    <label class="small fw-bold text-muted d-block text-uppercase mb-1">Sitio Web Oficial</label>
+                                    @if (!string.IsNullOrEmpty(Model.SitioWeb))
+                                    {
+                                        <a href="@Model.SitioWeb" target="_blank" class="text-primary text-decoration-none fw-bold d-flex align-items-center">
+                                            <i class="bi bi-globe2 me-2"></i> @Model.SitioWeb.Replace("https://", "").Replace("http://", "")
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small"><i class="bi bi-patch-question me-1"></i>Portal no vinculado</span>
+                                    }
+                                </div>
+
+                                <div class="pt-3 border-top">
+                                    <label class="small fw-bold text-muted d-block text-uppercase mb-1">Vínculo de Sistema</label>
+                                    <p class="mb-0 text-dark small fw-mono"><i class="bi bi-person-badge me-2"></i>UID-AUTH: @Model.UsuarioID</p>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-3">
+                                @* 💡 IMPORTANTE: Este link debe ir a la vista de edición *@
+                                <a asp-controller="Usuario" asp-action="ActualizarPerfil" class="btn btn-axon py-3 shadow-sm">
+                                    <i class="bi bi-gear-wide-connected me-2"></i>MODIFICAR PERFIL
+                                </a>
+                                <a asp-controller="Oferta" asp-action="MisOfertas" class="btn btn-outline-dark py-3">
+                                    <i class="bi bi-megaphone me-2"></i>MIS CONVOCATORIAS
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center text-muted small pb-5">
+                <p><i class="bi bi-shield-check me-1"></i> Nodo encriptado. Los cambios en el RUC requieren validación de identidad corporativa.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .axon-status-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+
+    .text-justify {
+        text-align: justify;
+    }
+
+    .fw-mono {
+        font-family: 'SFMono-Regular', Consolas, monospace;
+    }
+
+    .btn-axon {
+        background: linear-gradient(45deg, #0d6efd, #00d4ff);
+        border: none;
+        color: white;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+        .btn-axon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+            color: white;
+        }
+</style>

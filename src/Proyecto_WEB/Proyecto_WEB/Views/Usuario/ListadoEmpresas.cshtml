@@ -1,0 +1,181 @@
+﻿@model List<Proyecto_WEB.Models.Empresa>
+
+@{
+    ViewData["Title"] = "Gestión de Partners | AXON Admin";
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+
+    @* --- ALERTAS DE SISTEMA AXON --- *@
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm border-0 mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Mensaje"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-4 shadow-sm border-0 mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @* --- HEADER DEL PANEL --- *@
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-primary border-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0"><i class="bi bi-building-lock text-primary me-2"></i> Gestión de Empresas</h2>
+            <p class="text-muted small mb-0">Administración de partners corporativos y nodos empresariales</p>
+        </div>
+        <div class="text-end">
+            <span class="badge bg-soft-primary text-primary border px-3 py-2 rounded-pill">
+                <i class="bi bi-building-check me-1"></i> @Model.Count Partners Registrados
+            </span>
+        </div>
+    </div>
+
+    @* --- TABLA DE EMPRESAS --- *@
+    <div class="axon-card border-0 overflow-hidden shadow-sm rounded-4 bg-white">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th class="ps-4 py-3 text-uppercase fs-xs ls-1">Razón Social / RUC</th>
+                        <th class="py-3 text-uppercase fs-xs ls-1">Presencia Digital</th>
+                        <th class="text-center py-3 text-uppercase fs-xs ls-1">Estado de Red</th>
+                        <th class="text-end pe-4 py-3 text-uppercase fs-xs ls-1">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    @foreach (var item in Model)
+                    {
+                        string rowClass = !item.Activo ? "opacity-50 grayscale-filter" : "";
+
+                        <tr class="@rowClass">
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    @* Avatar dinámico *@
+                                    <div class="axon-avatar-company me-3 @(!item.Activo ? "bg-secondary text-white shadow-none" : "")">
+                                        @item.NombreEmpresa.Substring(0, 1).ToUpper()
+                                    </div>
+                                    <div>
+                                        <span class="fw-bold d-block text-dark">@item.NombreEmpresa</span>
+                                        <span class="text-muted fs-xs fw-mono">RUC: @item.RUC</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="small">
+                                    @if (!string.IsNullOrEmpty(item.SitioWeb))
+                                    {
+                                        <a href="@item.SitioWeb" target="_blank" class="text-primary text-decoration-none fw-bold">
+                                            <i class="bi bi-globe2 me-2"></i>Sitio Web
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted"><i class="bi bi-slash-circle me-2"></i>Sin portal</span>
+                                    }
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                @if (item.Activo)
+                                {
+                                    <span class="badge bg-soft-success text-success rounded-pill px-3 py-2">
+                                        <i class="bi bi-check-circle-fill me-1"></i> ACTIVO
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-soft-danger text-danger rounded-pill px-3 py-2">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i> INACTIVO
+                                    </span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group rounded-pill overflow-hidden shadow-sm border bg-white">
+                                    @* Ver Detalle *@
+                                    <a asp-action="DetalleEmpresa" asp-route-id="@item.EmpresaID" class="btn btn-white btn-sm px-3" title="Ver Perfil Corporativo">
+                                        <i class="bi bi-eye-fill text-primary"></i>
+                                    </a>
+
+                                    @* 💡 TOGGLE DINÁMICO: Sincronizado con UsuarioController *@
+                                    <a asp-action="AlternarEstadoEmpresa" asp-route-id="@item.EmpresaID"
+                                       class="btn btn-white btn-sm px-3 border-start"
+                                       onclick="return confirm('@(item.Activo ? "¿Deseas suspender este nodo empresarial?" : "¿Deseas reactivar esta empresa en la red AXON?")')"
+                                       title="@(item.Activo ? "Desactivar" : "Activar")">
+                                        @if (item.Activo)
+                                        {
+                                            <i class="bi bi-slash-circle text-danger"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-check-circle-fill text-success"></i>
+                                        }
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .grayscale-filter {
+        filter: grayscale(100%);
+        transition: 0.4s;
+    }
+
+    .axon-avatar-company {
+        width: 45px;
+        height: 45px;
+        background: #1e293b;
+        color: #00d4ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .bg-soft-primary {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+
+    .bg-soft-success {
+        background-color: #dcfce7 !important;
+    }
+
+    .bg-soft-danger {
+        background-color: #fee2e2 !important;
+    }
+
+    .btn-white {
+        background: white;
+        border: none;
+        transition: all 0.2s;
+    }
+
+        .btn-white:hover {
+            background: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+    .fs-xs {
+        font-size: 0.75rem;
+    }
+
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+
+    .fw-mono {
+        font-family: 'SFMono-Regular', Consolas, monospace;
+    }
+</style>

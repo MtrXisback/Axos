@@ -1,0 +1,172 @@
+﻿@model Proyecto_WEB.Models.Empresa
+@{
+    ViewData["Title"] = "Perfil Corporativo | AXON";
+    // Seguridad para la inicial
+    string inicial = !string.IsNullOrEmpty(Model.NombreEmpresa) ? Model.NombreEmpresa.Substring(0, 1).ToUpper() : "E";
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    @* --- HEADER CORPORATIVO --- *@
+    <div class="axon-card border-0 shadow-lg p-0 bg-white overflow-hidden rounded-4 mb-5">
+
+        @* Banner decorativo superior con gradiente AXON *@
+        <div class="axon-bg-gradient p-5 text-white position-relative">
+            <div class="position-relative z-index-10 d-flex align-items-center flex-wrap">
+                <div class="axon-avatar-xl shadow-lg border border-4 border-white me-4 mb-3 mb-md-0">
+                    @inicial
+                </div>
+                <div>
+                    <div class="d-flex align-items-center mb-1">
+                        <h1 class="fw-bold mb-0 me-3">@Model.NombreEmpresa</h1>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <span class="badge bg-white text-primary rounded-pill small">MODO ADMIN</span>
+                        }
+                    </div>
+                    <p class="mb-0 opacity-75 fs-5">
+                        <i class="bi bi-patch-check-fill me-2"></i>Partner Tecnológico Verificado
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        @* --- CUERPO DE INFORMACIÓN --- *@
+        <div class="p-5">
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <h4 class="fw-bold text-dark mb-3 border-bottom pb-2">Sobre nosotros</h4>
+                    <p class="text-secondary lh-lg" style="text-align: justify;">
+                        @if (!string.IsNullOrEmpty(Model.Descripcion))
+                        {
+                            @Model.Descripcion
+                        }
+                        else
+                        {
+                            <span class="fst-italic text-muted">
+                                <i class="bi bi-info-circle me-1"></i>Esta empresa aún no ha proporcionado una descripción detallada de su nodo corporativo.
+                            </span>
+                        }
+                    </p>
+
+                    <div class="mt-5">
+                        <h4 class="fw-bold text-dark mb-4"><i class="bi bi-briefcase text-primary me-2"></i> Oportunidades de Carrera</h4>
+                        <div class="alert alert-light border-dashed rounded-4 p-5 text-center bg-light">
+                            <i class="bi bi-search fs-2 text-primary mb-3 d-block"></i>
+                            <p class="mb-0 text-muted">Explora las señales de empleo que <strong>@Model.NombreEmpresa</strong> está emitiendo en la red AXON.</p>
+
+                            @* 💡 Link sincronizado al controlador de Ofertas *@
+                            <a asp-controller="Oferta" asp-action="VacantesPorEmpresa" asp-route-id="@Model.EmpresaID"
+                               class="btn btn-primary mt-3 px-5 py-2 rounded-pill shadow-sm">
+                                <i class="bi bi-eye me-2"></i>
+                                @(User.IsInRole("Admin") ? "Gestionar Vacantes del Nodo" : "Ver vacantes activas")
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                @* --- BARRA LATERAL DE DATOS --- *@
+                <div class="col-lg-4">
+                    <div class="p-4 bg-light rounded-4 border-start border-primary border-4 shadow-sm mb-4">
+                        <h5 class="fw-bold mb-4 text-dark">Información de Enlace</h5>
+
+                        <div class="mb-4">
+                            <label class="small fw-bold text-muted d-block text-uppercase mb-1">RUC Corporativo</label>
+                            <span class="text-dark fw-bold fw-mono bg-white px-2 py-1 rounded border">@Model.RUC</span>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.SitioWeb))
+                        {
+                            <div class="mb-4">
+                                <label class="small fw-bold text-muted d-block text-uppercase mb-1">Portal Digital</label>
+                                <a href="@Model.SitioWeb" target="_blank" class="text-primary text-decoration-none fw-bold d-flex align-items-center">
+                                    <i class="bi bi-globe2 me-2"></i>Visitar Sitio Web Oficial
+                                </a>
+                            </div>
+                        }
+
+                        <div class="mb-2">
+                            <label class="small fw-bold text-muted d-block text-uppercase mb-1">Estado en Red</label>
+                            @{
+                                var statusClass = Model.Activo ? "bg-soft-success text-success" : "bg-soft-danger text-danger";
+                                var statusText = Model.Activo ? "Sincronizado" : "Nodo Offline";
+                                var statusIcon = Model.Activo ? "bi-broadcast" : "bi-exclamation-octagon";
+                            }
+                            <span class="badge @statusClass px-3 py-2 rounded-pill fw-bold">
+                                <i class="bi @statusIcon me-1"></i> @statusText
+                            </span>
+                        </div>
+                    </div>
+
+                    @* --- ACCIONES DE ADMIN (Opcional) --- *@
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="d-grid gap-2 mb-4">
+                            <a asp-action="AlternarEstadoEmpresa" asp-route-id="@Model.EmpresaID" class="btn btn-outline-danger btn-sm rounded-pill">
+                                <i class="bi bi-power me-1"></i>Suspender/Activar Nodo
+                            </a>
+                        </div>
+                    }
+
+                    <div class="d-grid mt-4">
+                        <a href="javascript:history.back()" class="btn btn-white border py-3 fw-bold text-muted shadow-sm hover-gray">
+                            <i class="bi bi-arrow-left me-2"></i>Volver al Listado
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .axon-bg-gradient {
+        background: linear-gradient(135deg, #0d6efd 0%, #002d72 100%);
+        border-bottom: 5px solid rgba(255,255,255,0.1);
+    }
+
+    .axon-avatar-xl {
+        width: 110px;
+        height: 110px;
+        background: white;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 28px;
+        font-size: 3.5rem;
+        font-weight: 800;
+        transition: transform 0.3s;
+    }
+
+        .axon-avatar-xl:hover {
+            transform: scale(1.05);
+        }
+
+    .border-dashed {
+        border-style: dashed !important;
+        border-width: 2px !important;
+        border-color: #dee2e6 !important;
+    }
+
+    .bg-soft-success {
+        background-color: #dcfce7 !important;
+    }
+
+    .bg-soft-danger {
+        background-color: #fee2e2 !important;
+    }
+
+    .fw-mono {
+        font-family: 'SFMono-Regular', Consolas, monospace;
+        letter-spacing: -0.5px;
+    }
+
+    .hover-gray:hover {
+        background-color: #f1f5f9 !important;
+        color: #334155 !important;
+    }
+
+    .z-index-10 {
+        z-index: 10;
+    }
+</style>

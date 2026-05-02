@@ -1,0 +1,115 @@
+﻿@{
+    ViewData["Title"] = "Políticas de Privacidad | AXON";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5 animate__animated animate__fadeIn">
+        <h6 class="text-primary fw-bold text-uppercase ls-2">Legal & Transparency</h6>
+        <h1 class="display-4 fw-bold text-dark">Compromiso de <span class="text-gradient">Privacidad</span></h1>
+        <p class="text-muted mx-auto" style="max-width: 700px;">
+            En AXON, la seguridad de tus datos es el núcleo de nuestra sinapsis.
+            Nos tomamos en serio la protección de tu información personal y profesional.
+        </p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="axon-card p-4 h-100">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="icon-circle bg-light-primary me-3">
+                        <i class="bi bi-shield-lock-fill text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0">Tratamiento de Datos</h5>
+                </div>
+                <p class="text-muted small">
+                    Recopilamos información estrictamente necesaria para el funcionamiento de la sinapsis entre candidato y empresa.
+                    Esto incluye datos de perfil, historial académico y trayectorias técnicas validadas para garantizar la integridad del ecosistema AXON.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="axon-card p-4 h-100">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="icon-circle bg-light-cyan me-3">
+                        <i class="bi bi-eye-slash-fill text-cyan"></i>
+                    </div>
+                    <h5 class="fw-bold mb-0">Uso de la Información</h5>
+                </div>
+                <p class="text-muted small">
+                    Tus datos solo serán visibles para empresas registradas y validadas cuando decidas postular a una vacante.
+                    No comercializamos, vendemos ni distribuimos tu "Core Data" a terceros ajenos al proceso de reclutamiento tecnológico.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-12 mt-4">
+            <div class="axon-card p-5 bg-white">
+                <h4 class="fw-bold mb-4 text-dark border-bottom pb-3">Protocolos de Seguridad</h4>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <p class="text-muted">
+                            Implementamos capas de cifrado de extremo a extremo para asegurar que tu currículum y datos de contacto
+                            viajen de forma segura a través de nuestros canales neuronales. Cumplimos con los estándares de protección
+                            de datos vigentes para el sector IT en Perú.
+                        </p>
+                        <p class="text-muted">
+                            <strong>Cookies y Seguimiento:</strong> Utilizamos tecnologías de rastreo mínimas para optimizar tu experiencia
+                            de usuario y recordar tus preferencias de búsqueda de empleo. Al navegar por AXON, aceptas nuestra arquitectura
+                            de datos optimizada.
+                        </p>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <div class="p-4 border rounded-4 bg-light">
+                            <i class="bi bi-patch-check-fill text-success display-4"></i>
+                            <p class="fw-bold mt-2 mb-0">Certificación Digital</p>
+                            <small class="text-muted">Protección de Datos Nivel IT-05</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5 text-muted small">
+        <p>Última actualización: Abril 2026 | AXON Jobs - Cibertec Project</p>
+        <a asp-action="Index" class="btn btn-link btn-sm text-decoration-none">Volver al inicio</a>
+    </div>
+</div>
+
+<style>
+    /* Reutilizamos el estilo del Landing para consistencia */
+    .ls-2 {
+        letter-spacing: 2px;
+    }
+
+    .icon-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .bg-light-primary {
+        background: rgba(0, 123, 255, 0.1);
+    }
+
+    .bg-light-cyan {
+        background: rgba(0, 242, 255, 0.1);
+    }
+
+    .text-cyan {
+        color: #00f2ff;
+    }
+
+    .axon-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid rgba(0,0,0,0.05);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+        transition: all 0.3s ease;
+    }
+</style>

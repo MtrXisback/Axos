@@ -1,0 +1,262 @@
+﻿@model Proyecto_WEB.Models.OfertaTrabajo
+
+@{
+    ViewData["Title"] = "Detalle de Vacante | AXON";
+    var habilidades = ViewBag.Habilidades as List<Proyecto_WEB.Models.Habilidad> ?? new List<Proyecto_WEB.Models.Habilidad>();
+    bool yaPostulo = ViewBag.YaPostulo ?? false; // 💡 La clave de la sinapsis
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    <div class="mb-4">
+        <a asp-controller="Home" asp-action="Buscador" class="text-decoration-none text-muted axon-back-link">
+            <i class="bi bi-arrow-left-circle-fill me-2"></i> Volver al ecosistema de vacantes
+        </a>
+    </div>
+
+    <div class="row g-4">
+        @* --- CUERPO PRINCIPAL --- *@
+        <div class="col-lg-8">
+            <div class="axon-card border-0 shadow-sm mb-4 bg-white rounded-4">
+                <div class="card-body p-5">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <span class="badge bg-light-primary text-primary mb-2 text-uppercase ls-1 px-3">@Model.EspecialidadNombre</span>
+                            <h1 class="display-6 fw-bold text-dark mb-1">@Model.Titulo</h1>
+                            <p class="text-muted lead mb-0">
+                                <i class="bi bi-building-fill text-primary me-2"></i>@Model.NombreEmpresa
+                                <span class="mx-2 text-light">|</span>
+                                <i class="bi bi-geo-alt-fill text-info me-1"></i>@Model.Ciudad
+                            </p>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge @(Model.Estado == "Activa" ? "bg-soft-success" : "bg-soft-danger") px-3 py-2 rounded-pill shadow-sm">
+                                <i class="bi bi-broadcast me-1"></i> Nodo @Model.Estado
+                            </span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 opacity-25">
+
+                    @* Descripción *@
+                    <div class="section-content mb-5">
+                        <h5 class="fw-bold text-dark mb-3 d-flex align-items-center">
+                            <i class="bi bi-text-paragraph text-primary me-2"></i> Definición del Rol
+                        </h5>
+                        <div class="text-muted" style="white-space: pre-line; line-height: 1.8; font-size: 1.05rem;">
+                            @Model.Descripcion
+                        </div>
+                    </div>
+
+                    @* Habilidades *@
+                    <div class="section-content">
+                        <h5 class="fw-bold text-dark mb-3 d-flex align-items-center">
+                            <i class="bi bi-cpu-fill text-info me-2"></i> Stack Tecnológico Requerido
+                        </h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            @if (habilidades.Count > 0)
+                            {
+                                foreach (var skill in habilidades)
+                                {
+                                    <span class="axon-skill-tag">
+                                        <i class="bi bi-patch-check-fill text-primary me-2"></i>@skill.Nombre
+                                    </span>
+                                }
+                            }
+                            else
+                            {
+                                <div class="alert alert-light border-dashed w-100 py-3 text-center">
+                                    <small class="text-muted italic">Este nodo no requiere especificaciones técnicas adicionales.</small>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* --- SIDEBAR DE ACCIÓN --- *@
+        <div class="col-lg-4">
+            <div class="axon-card border-0 sticky-top shadow-lg rounded-4 bg-white" style="top: 100px; z-index: 10;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4 text-center border-bottom pb-3 text-dark">Resumen del Vínculo</h5>
+
+                    <div class="axon-info-row d-flex justify-content-between py-2">
+                        <span class="text-muted small"><i class="bi bi-cash-coin me-2"></i>Compensación:</span>
+                        <span class="fw-bold text-success">S/ @Model.SalarioMin.ToString("N0") - @Model.SalarioMax.ToString("N0")</span>
+                    </div>
+                    <div class="axon-info-row d-flex justify-content-between py-2">
+                        <span class="text-muted small"><i class="bi bi-laptop me-2"></i>Modalidad:</span>
+                        <span class="fw-bold text-dark">@Model.Modalidad</span>
+                    </div>
+                    <div class="axon-info-row d-flex justify-content-between py-2 mb-4 border-0">
+                        <span class="text-muted small"><i class="bi bi-clock-history me-2"></i>Publicado:</span>
+                        <span class="text-dark">@Model.FechaPublicacion.ToString("dd MMM, yyyy")</span>
+                    </div>
+
+                    @* 💡 LÓGICA DE POSTULACIÓN DINÁMICA *@
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @if (User.IsInRole("Candidato"))
+                        {
+                            @if (yaPostulo)
+                            {
+                                @* ESTADO: YA POSTULÓ *@
+                                <div class="bg-soft-success p-4 rounded-4 text-center animate__animated animate__pulse">
+                                    <i class="bi bi-check-all display-4 mb-2 d-block"></i>
+                                    <h6 class="fw-bold mb-1">Sinapsis Establecida</h6>
+                                    <p class="small mb-3">Tu pulso ya está registrado en este nodo.</p>
+                                    <a asp-controller="Postulacion" asp-action="MisPostulaciones" class="btn btn-success rounded-pill w-100 fw-bold shadow-sm">
+                                        VER MI PROCESO
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                @* ESTADO: PUEDE POSTULAR *@
+                                <form asp-controller="Postulacion" asp-action="Aplicar" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="ofertaId" value="@Model.OfertaID" />
+
+                                    <label class="form-label small fw-bold text-muted mb-2">
+                                        <i class="bi bi-file-earmark-pdf-fill text-danger"></i> ADJUNTA TU CV (PDF)
+                                    </label>
+                                    <input type="file" name="ArchivoCV" class="form-control mb-3 rounded-3" accept=".pdf" required />
+
+                                    <button type="submit" class="btn btn-axon btn-lg w-100 py-3 shadow-neon-sm fw-bold rounded-pill">
+                                        INICIAR POSTULACIÓN <i class="bi bi-send-check-fill ms-2"></i>
+                                    </button>
+                                </form>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert bg-light-primary border-0 small text-center text-primary rounded-4">
+                                <i class="bi bi-info-circle-fill me-2"></i> Acceso restringido a Candidatos.
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <a asp-controller="Acceso" asp-action="Index" class="btn btn-outline-primary w-100 py-3 fw-bold rounded-pill border-2">
+                            LOGIN PARA POSTULAR
+                        </a>
+                    }
+
+                    @* --- MENSAJES DE FEEDBACK --- *@
+                    @if (TempData["Mensaje"] != null)
+                    {
+                        <div class="alert alert-success-axon mt-3 animate__animated animate__fadeIn">
+                            <i class="bi bi-check-all me-2"></i> @TempData["Mensaje"]
+                        </div>
+                    }
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger-axon mt-3 animate__animated animate__shakeX">
+                            <i class="bi bi-exclamation-octagon-fill me-2"></i> @TempData["Error"]
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos Premium AXON */
+    :root {
+        --axon-primary: #0d6efd;
+        --axon-success: #166534;
+    }
+
+    .axon-card {
+        border-radius: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .axon-back-link {
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+        .axon-back-link:hover {
+            color: var(--axon-primary) !important;
+            transform: translateX(-5px);
+        }
+
+    .bg-light-primary {
+        background: rgba(13, 110, 253, 0.08);
+    }
+
+    .bg-soft-success {
+        background: #dcfce7;
+        color: var(--axon-success);
+        border: 1px solid #bbf7d0;
+    }
+
+    .bg-soft-danger {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .axon-skill-tag {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #334155;
+        padding: 10px 18px;
+        border-radius: 14px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        .axon-skill-tag:hover {
+            background: white;
+            border-color: var(--axon-primary);
+            box-shadow: 0 5px 15px rgba(13,110,253,0.15);
+            transform: translateY(-3px);
+        }
+
+    .axon-info-row {
+        border-bottom: 1px dashed #e2e8f0;
+    }
+
+    .border-dashed {
+        border: 2px dashed #cbd5e1 !important;
+        border-radius: 15px;
+    }
+
+    .alert-success-axon {
+        background: #f0fdf4;
+        color: #166534;
+        border-left: 5px solid #22c55e;
+        padding: 15px;
+        border-radius: 12px;
+    }
+
+    .alert-danger-axon {
+        background: #fff1f2;
+        color: #be123c;
+        border-left: 5px solid #f43f5e;
+        padding: 15px;
+        border-radius: 12px;
+    }
+
+    .btn-axon {
+        background: linear-gradient(45deg, #0d6efd, #00d4ff);
+        color: white;
+        border: none;
+        transition: 0.3s;
+    }
+
+        .btn-axon:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+            color: white;
+        }
+
+    @@media (max-width: 991px) {
+        .sticky-top {
+            position: relative !important;
+            top: 0 !important;
+        }
+    }
+</style>

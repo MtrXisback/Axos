@@ -1,0 +1,89 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;}
+
+
+/* Paleta AXON */
+:root {
+    --axon-dark: #0f172a; /* Azul noche profundo */
+    --axon-primary: #007bff; /* Azul profesional */
+    --axon-neon: #00f2ff; /* Cian eléctrico para acentos */
+    --axon-bg: #f8fafc; /* Fondo ultra limpio */
+    --axon-card: #ffffff;
+}
+
+body {
+    background-color: var(--axon-bg);
+    font-family: 'Inter', 'Segoe UI', sans-serif; /* Tipografía más moderna */
+    color: #334155;
+    margin-bottom: 60px;
+}
+
+/* Botones con el "Axon Glow" */
+.btn-axon {
+    background-color: var(--axon-primary);
+    color: white;
+    border-radius: 50px;
+    padding: 10px 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+    .btn-axon:hover {
+        background-color: var(--axon-neon);
+        color: var(--axon-dark);
+        box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+        transform: translateY(-2px);
+    }
+
+/* Tarjetas Estilo Glassmorphism suave */
+.axon-card {
+    background: var(--axon-card);
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+    .axon-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--axon-neon);
+    }
+
+/* Títulos con degradado */
+.text-gradient {
+    background: linear-gradient(90deg, var(--axon-primary), var(--axon-neon));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.bg-soft-primary {
+    background: rgba(0, 123, 255, 0.1);
+}
+
+.axon-avatar-xl {
+    width: 100px;
+    height: 100px;
+    background: var(--axon-dark);
+    color: white;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+}

@@ -1,0 +1,119 @@
+﻿@model List<Proyecto_WEB.Models.OfertaTrabajo>
+
+@{
+    ViewData["Title"] = "Control de Vacantes | AXON Admin";
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    @* --- HEADER PERSONALIZADO --- *@
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-primary border-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0">
+                <i class="bi bi-briefcase-fill text-primary me-2"></i> @(ViewBag.NombreEmpresa ?? "Nodo Empresarial")
+            </h2>
+            <p class="text-muted small mb-0">Listado técnico de vacantes y estados de postulación</p>
+        </div>
+        <a href="javascript:history.back()" class="btn btn-light rounded-pill px-4 fw-bold text-muted border">
+            <i class="bi bi-arrow-left me-1"></i> VOLVER
+        </a>
+    </div>
+
+    @* --- TABLA DE VACANTES --- *@
+    <div class="axon-card border-0 overflow-hidden shadow-sm rounded-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th class="ps-4 py-3 text-uppercase fs-xs ls-1">Puesto / Especialidad</th>
+                        <th class="py-3 text-uppercase fs-xs ls-1">Ubicación / Modalidad</th>
+                        <th class="py-3 text-uppercase fs-xs ls-1">Rango Salarial</th>
+                        <th class="text-center py-3 text-uppercase fs-xs ls-1">Estado</th>
+                        <th class="text-end pe-4 py-3 text-uppercase fs-xs ls-1">Gestión</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <span class="fw-bold d-block text-dark">@item.Titulo</span>
+                                    <span class="text-muted fs-xs">@item.EspecialidadNombre</span>
+                                </td>
+                                <td>
+                                    <span class="d-block small"><i class="bi bi-geo-alt me-1 text-primary"></i> @item.Ciudad</span>
+                                    <span class="text-muted fs-xs">@item.Modalidad</span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-primary">S/ @item.SalarioMin.ToString("N0")</span>
+                                    <span class="text-muted"> - </span>
+                                    <span class="fw-bold text-primary">S/ @item.SalarioMax.ToString("N0")</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge @(item.Estado == "Activa" ? "bg-soft-success text-success" : "bg-soft-danger text-danger") rounded-pill px-3 py-2">
+                                        <i class="bi @(item.Estado == "Activa" ? "bi-check-circle-fill" : "bi-pause-circle-fill") me-1"></i>
+                                        @item.Estado.ToUpper()
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group rounded-pill overflow-hidden shadow-sm border">
+                                        @* Ver detalle de la oferta *@
+                                        <a asp-action="Detalle" asp-route-id="@item.OfertaID" class="btn btn-white btn-sm px-3" title="Ver Detalles">
+                                            <i class="bi bi-eye text-primary"></i>
+                                        </a>
+
+                                        @* Botón de Toggle para el Admin *@
+                                        <form asp-action="Eliminar" asp-route-id="@item.OfertaID" asp-route-estadoActual="@item.Estado" method="post" style="display:contents;">
+                                            <button type="submit" class="btn btn-white btn-sm px-3"
+                                                    onclick="return confirm('¿Seguro que deseas cambiar el estado de esta vacante?')"
+                                                    title="@(item.Estado == "Activa" ? "Pausar" : "Activar")">
+                                                <i class="bi bi-power @(item.Estado == "Activa" ? "text-danger" : "text-success")"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-info-circle d-block fs-2 mb-2"></i>
+                                Este nodo no tiene vacantes registradas actualmente.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-soft-success {
+        background-color: #dcfce7 !important;
+    }
+
+    .bg-soft-danger {
+        background-color: #fee2e2 !important;
+    }
+
+    .btn-white {
+        background: white;
+        border: none;
+    }
+
+        .btn-white:hover {
+            background: #f1f5f9;
+        }
+
+    .fs-xs {
+        font-size: 0.75rem;
+    }
+
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+</style>

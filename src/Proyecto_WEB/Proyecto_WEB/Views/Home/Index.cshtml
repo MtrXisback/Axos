@@ -1,0 +1,170 @@
+﻿@model List<Proyecto_WEB.Models.OfertaTrabajo>
+
+@{
+    ViewData["Title"] = "Explorar Vacantes | AXON";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            <div class="axon-card sticky-top" style="top: 100px; z-index: 10;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4 text-dark d-flex align-items-center">
+                        <i class="bi bi-sliders2-vertical me-2 text-primary"></i> Filtros de Búsqueda
+                    </h5>
+
+                    <form asp-action="Buscador" method="get">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted text-uppercase ls-1">Especialidad</label>
+                            <select name="especialidadId" class="form-select border-0 bg-light">
+                                <option value="">Todas las áreas</option>
+                                @if (ViewBag.Especialidades != null)
+                                {
+                                    foreach (var esp in (List<Proyecto_WEB.Models.Especialidad>)ViewBag.Especialidades)
+                                    {
+                                        <option value="@esp.EspecialidadID" selected="@(ViewBag.EspSel == esp.EspecialidadID)">
+                                            @esp.Nombre
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted text-uppercase ls-1">Modalidad</label>
+                            <select name="modalidad" class="form-select border-0 bg-light">
+                                <option value="">Cualquiera</option>
+                                <option value="Presencial" selected="@(ViewBag.ModSel == "Presencial")">Presencial</option>
+                                <option value="Remoto" selected="@(ViewBag.ModSel == "Remoto")">Remoto</option>
+                                <option value="Híbrido" selected="@(ViewBag.ModSel == "Híbrido")">Híbrido</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase ls-1">Salario Mensual</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-0 bg-light text-primary fw-bold">S/</span>
+                                <input type="number" name="salarioMin" class="form-control border-0 bg-light"
+                                       value="@ViewBag.SalSel" placeholder="Mínimo" />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-axon w-100 shadow-sm mb-2">
+                            <i class="bi bi-funnel-fill me-2"></i> Aplicar Filtros
+                        </button>
+                        <a href="@Url.Action("Buscador")" class="btn btn-link btn-sm w-100 text-decoration-none text-muted">
+                            Reiniciar búsqueda
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold text-dark mb-0">Oportunidades <span class="text-gradient">Disponibles</span></h3>
+                    <p class="text-muted small">Resultados en tiempo real desde el core de AXON</p>
+                </div>
+                <span class="badge bg-white text-primary border px-3 py-2 shadow-sm rounded-pill">
+                    <i class="bi bi-activity me-1"></i> @Model.Count Vacantes encontradas
+                </span>
+            </div>
+
+            @if (Model.Count == 0)
+            {
+                <div class="axon-card text-center py-5">
+                    <div class="card-body">
+                        <i class="bi bi-search-heart display-1 text-light-primary mb-3 d-block"></i>
+                        <h4 class="fw-bold text-dark">No hay matches por ahora</h4>
+                        <p class="text-muted">Prueba ajustando los filtros o limpia la búsqueda para ver todo el talento.</p>
+                        <a href="@Url.Action("Buscador")" class="btn btn-outline-primary rounded-pill">Ver todo</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                @foreach (var item in Model)
+                {
+                    <div class="axon-card mb-4 border-start-axon">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h5 class="fw-bold text-dark mb-0 me-2">@item.Titulo</h5>
+                                        <span class="badge bg-light-primary text-primary border-0 small">@item.EspecialidadNombre</span>
+                                    </div>
+
+                                    <div class="d-flex flex-wrap gap-3 mb-3 text-muted small">
+                                        <span><i class="bi bi-building me-1"></i> @item.NombreEmpresa</span>
+                                        <span><i class="bi bi-geo-alt me-1"></i> @item.Ciudad</span>
+                                        <span><i class="bi bi-calendar3 me-1"></i> @item.FechaPublicacion.ToString("dd MMM, yyyy")</span>
+                                    </div>
+
+                                    <div class="d-flex gap-2">
+                                        <span class="badge rounded-pill bg-soft-info"><i class="bi bi-laptop me-1"></i> @item.Modalidad</span>
+                                        <span class="badge rounded-pill bg-soft-success"><i class="bi bi-cash-stack me-1"></i> S/ @item.SalarioMin - @item.SalarioMax</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                    <a asp-controller="Oferta" asp-action="Detalle" asp-route-id="@item.OfertaID"
+                                       class="btn btn-outline-dark rounded-pill px-4 btn-sm hover-axon-bg">
+                                        Ver Detalles <i class="bi bi-arrow-up-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Clases específicas para el Buscador AXON */
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+
+    .bg-light-primary {
+        background: rgba(0, 123, 255, 0.1);
+    }
+
+    .bg-soft-info {
+        background: #e0f7fa;
+        color: #00838f;
+        border: 1px solid #b2ebf2;
+    }
+
+    .bg-soft-success {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+    }
+
+    .border-start-axon {
+        border-left: 0px solid var(--axon-neon) !important;
+        transition: all 0.3s ease;
+    }
+
+        .border-start-axon:hover {
+            border-left: 6px solid var(--axon-neon) !important;
+            transform: translateX(10px);
+            background: linear-gradient(to right, rgba(0, 242, 255, 0.02), white);
+        }
+
+    .hover-axon-bg:hover {
+        background-color: var(--axon-dark);
+        color: white;
+        border-color: var(--axon-dark);
+    }
+
+    .ls-2 {
+        letter-spacing: 2px;
+    }
+
+    .text-light-primary {
+        color: rgba(0, 123, 255, 0.2);
+    }
+</style>

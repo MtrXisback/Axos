@@ -1,0 +1,244 @@
+﻿@model List<Proyecto_WEB.Models.Ubicacion>
+
+@{
+    ViewData["Title"] = "Gestión Geográfica | AXON Admin";
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    @* --- HEADER --- *@
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-4 shadow-sm border-start border-cyan border-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0"><i class="bi bi-geo-alt-fill text-cyan me-2"></i> Infraestructura de Ubicaciones</h2>
+            <p class="text-muted small mb-0">Administración de sedes y puntos de conexión regional</p>
+        </div>
+        <button type="button" class="btn btn-axon shadow-neon-sm" data-bs-toggle="modal" data-bs-target="#modalNueva">
+            <i class="bi bi-plus-lg me-1"></i> Nueva Ubicación
+        </button>
+    </div>
+
+    @* --- TABLA DE UBICACIONES --- *@
+    <div class="axon-card border-0 overflow-hidden shadow-sm rounded-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th class="ps-4 py-3 text-uppercase fs-xs ls-1">Geo ID</th>
+                        <th class="py-3 text-uppercase fs-xs ls-1">Ciudad / Región</th>
+                        <th class="py-3 text-uppercase fs-xs ls-1">País</th>
+                        <th class="text-end pe-4 py-3 text-uppercase fs-xs ls-1">Control de Nodo</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    @foreach (var item in Model)
+                    {
+                        // 💡 Lógica visual: Si está inactivo, aplicamos filtro de escala de grises
+                        string rowClass = item.Estado == "Inactivo" ? "opacity-50 grayscale-filter" : "";
+
+                        <tr class="@rowClass">
+                            <td class="ps-4">
+                                <span class="badge bg-light text-cyan border fw-mono">#LOC-@item.UbicacionID.ToString("D3")</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle @(item.Estado == "Inactivo" ? "bg-secondary" : "bg-light-cyan") p-2 me-2">
+                                        <i class="bi @(item.Estado == "Inactivo" ? "bi-building-fill-slash" : "bi-building-fill-check") @(item.Estado == "Inactivo" ? "text-white" : "text-cyan")"></i>
+                                    </div>
+                                    <div>
+                                        <span class="fw-bold text-dark">@item.Ciudad</span>
+                                        @if (item.Estado == "Inactivo")
+                                        {
+                                            <span class="badge bg-danger ms-2" style="font-size: 0.6rem;">OFFLINE</span>
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="text-muted"><i class="bi bi-globe-americas me-1"></i> @item.Pais</span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group shadow-sm rounded-pill overflow-hidden border">
+                                    <button class="btn btn-white btn-sm border-end px-3" onclick="abrirEditar(@item.UbicacionID)" title="Editar">
+                                        <i class="bi bi-pencil-fill text-primary"></i>
+                                    </button>
+
+                                    @* 💡 Botón dinámico: Cambia según el estado (Toggle Lógico) *@
+                                    <a asp-action="EliminarUbicacion" asp-route-id="@item.UbicacionID"
+                                       class="btn btn-white btn-sm px-3"
+                                       onclick="return confirm('¿Seguro de cambiar la disponibilidad de este nodo, mi rey?')"
+                                       title="@(item.Estado == "Inactivo" ? "Reactivar Sede" : "Desactivar Sede")">
+                                        <i class="bi @(item.Estado == "Inactivo" ? "bi-play-circle-fill text-success" : "bi-power text-danger")"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@* --- MODAL NUEVA UBICACIÓN --- *@
+<div class="modal fade" id="modalNueva" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-dark text-white border-0 py-3">
+                <h5 class="modal-title fw-bold"><i class="bi bi-geo-fill me-2"></i> Registrar Nueva Sede</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="GuardarUbicacion" method="post">
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">CIUDAD / DISTRITO</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-map"></i></span>
+                            <input type="text" name="ciudad" class="form-control bg-light border-0" placeholder="Ej: Lima" required />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">PAÍS</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-globe"></i></span>
+                            <input type="text" name="pais" class="form-control bg-light border-0" placeholder="Ej: Perú" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-axon px-4">Establecer Nodo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* --- MODAL EDITAR UBICACIÓN --- *@
+<div class="modal fade" id="modalEditar" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-cyan text-white border-0 py-3">
+                <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i> Modificar Ubicación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="ActualizarUbicacion" method="post">
+                <div class="modal-body p-4">
+                    <input type="hidden" id="editID" name="UbicacionID" />
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">CIUDAD</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-geo-alt"></i></span>
+                            <input type="text" id="editCiudad" name="Ciudad" class="form-control bg-light border-0" required />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">PAÍS</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-globe-americas"></i></span>
+                            <input type="text" id="editPais" name="Pais" class="form-control bg-light border-0" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-cyan text-white rounded-pill px-4 shadow-sm">
+                        <i class="bi bi-save me-1"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --axon-neon: #00f2ff;
+    }
+
+    .border-cyan {
+        border-color: var(--axon-neon) !important;
+    }
+
+    .bg-cyan {
+        background-color: var(--axon-neon) !important;
+    }
+
+    .text-cyan {
+        color: var(--axon-neon) !important;
+    }
+
+    .bg-light-cyan {
+        background-color: rgba(0, 242, 255, 0.1);
+    }
+
+    /* 💡 Filtro para nodos desactivados */
+    .grayscale-filter {
+        filter: grayscale(100%);
+        transition: all 0.5s ease;
+    }
+
+    .btn-axon {
+        background: var(--axon-neon);
+        color: #000;
+        font-weight: 700;
+        border-radius: 50px;
+        border: none;
+        transition: 0.3s;
+    }
+
+        .btn-axon:hover {
+            background: #00d7e6;
+            transform: scale(1.05);
+        }
+
+    .btn-white {
+        background: #fff;
+        border: none;
+    }
+
+        .btn-white:hover {
+            background: #f8f9fa;
+        }
+
+    .fw-mono {
+        font-family: 'SFMono-Regular', Consolas, monospace;
+    }
+
+    .fs-xs {
+        font-size: 0.75rem;
+    }
+
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+</style>
+
+@section Scripts {
+    <script>
+                function abrirEditar(id) {
+            // Ajusta la URL según la vista (Ubicaciones, Especialidades o Habilidades)
+            fetch(`/Maestro/ObtenerUbicacion/${id}`)
+                .then(response => response.json())
+                .then(res => {
+                    // 💡 AQUÍ ESTÁ EL TRUCO:
+                    // 'res' es el objeto ApiResponse, los datos reales están en 'res.data'
+                    const info = res.data || res;
+
+                    // Para Ubicaciones:
+                    if(document.getElementById('editID')) {
+                        document.getElementById('editID').value = info.ubicacionID || info.UbicacionID;
+                        document.getElementById('editCiudad').value = info.ciudad || info.Ciudad;
+                        document.getElementById('editPais').value = info.pais || info.Pais;
+                    }
+
+                    // Para Especialidades/Habilidades (ajusta los IDs según tu vista):
+                    if(document.getElementById('editNombre')) {
+                        document.getElementById('editID').value = info.especialidadID || info.EspecialidadID || info.habilidadID || info.HabilidadID;
+                        document.getElementById('editNombre').value = info.nombre || info.Nombre;
+                    }
+
+                    new bootstrap.Modal(document.getElementById('modalEditar')).show();
+                })
+                .catch(error => console.error("Error mi king:", error));
+        }
+    </script>
+}

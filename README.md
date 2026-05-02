@@ -38,5 +38,5 @@ El proyecto ha sido desarrollado con un enfoque en robustez y rendimiento:
 
 \## 👥 Autor
 
-Miguel Alonso Villon Alcantara
+Miguel Alonso Villon Alcantara v-2.0
 
